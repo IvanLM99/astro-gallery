@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstroTerminal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Font for Console Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Background Stars -->
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>
+
+    <div class="container">
+        <!-- Header / Console Area -->
+        <header>
+            <div class="console-line">
+                <span class="prompt">user@universe:~$</span>
+                <span id="typewriter"></span><span class="cursor">|</span>
+            </div>
+            <nav>
+                <a href="#gallery">[ GALLERY ]</a>
+                <a href="#cv">[ CV_PORTFOLIO ]</a>
+                <a href="#contact">[ CONTACT ]</a>
+            </nav>
+        </header>
+
+        <!-- Gallery Section -->
+        <section id="gallery">
+            <h2>> ./load_images.sh</h2>
+            
+            <!-- Filters -->
+            <div class="filter-buttons">
+                <button class="btn active" onclick="filterImages('all')">ALL</button>
+                <button class="btn" onclick="filterImages('moon')">MOON</button>
+                <button class="btn" onclick="filterImages('dso')">DEEP_SKY</button>
+                <button class="btn" onclick="filterImages('landscape')">LANDSCAPES</button>
+                <button class="btn" onclick="filterImages('planetary')">PLANETARY</button>
+            </div>
+
+            <!-- Image Grid -->
+            <div class="gallery-grid">
+                <!-- Example Image 1 -->
+                <div class="gallery-item moon">
+                    <img src="https://via.placeholder.com/400x400/000000/FFFFFF?text=Moon+Phase" alt="Moon">
+                    <div class="overlay">
+                        <div class="text">OBJECT: MOON<br>ISO: 100<br>EXP: 1/200s</div>
+                    </div>
+                </div>
+
+                <!-- Example Image 2 -->
+                <div class="gallery-item dso">
+                    <img src="https://via.placeholder.com/400x400/111111/FFFFFF?text=Orion+Nebula" alt="Orion">
+                    <div class="overlay">
+                        <div class="text">OBJECT: M42<br>INT: 2 HRS<br>FILTER: Ha</div>
+                    </div>
+                </div>
+
+                <!-- Example Image 3 -->
+                <div class="gallery-item landscape">
+                    <img src="https://via.placeholder.com/400x400/222222/FFFFFF?text=Milky+Way" alt="Milky Way">
+                    <div class="overlay">
+                        <div class="text">LOC: DESERT<br>LENS: 14MM<br>STACKED</div>
+                    </div>
+                </div>
+                 <!-- Example Image 4 -->
+                 <div class="gallery-item planetary">
+                    <img src="https://via.placeholder.com/400x400/000000/FFFFFF?text=Jupiter" alt="Jupiter">
+                    <div class="overlay">
+                        <div class="text">OBJECT: JUPITER<br>FPS: 120<br>C11 EDGE HD</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CV Section -->
+        <section id="cv">
+            <h2>> cat cv.txt</h2>
+            <div class="cv-content">
+                <p><span class="keyword">NAME:</span> John Doe</p>
+                <p><span class="keyword">ROLE:</span> Astrophotographer & Developer</p>
+                <p><span class="keyword">EXP:</span> 5+ Years in Imaging</p>
+                <br>
+                <p>--- SKILLS ---</p>
+                <ul>
+                    <li>> PixInsight / Photoshop</li>
+                    <li>> Python / Data Analysis</li>
+                    <li>> Hardware Integration</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2>> ./send_transmission.exe</h2>
+            <p>Connect via subspace frequencies:</p>
+            <p><a href="mailto:email@example.com">email@example.com</a></p>
+            <p><a href="#">instagram/astrouser</a></p>
+        </section>
+
+        <footer>
+            <p>SYSTEM STATUS: ONLINE. &copy; 2024</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
