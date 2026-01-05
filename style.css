@@ -1,0 +1,154 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #050505; /* Deep space black */
+    color: #e0e0e0; /* Off-white for readability */
+    font-family: 'Fira Code', monospace;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+a { color: #00ff41; text-decoration: none; transition: 0.3s; }
+a:hover { text-shadow: 0 0 10px #00ff41; color: #fff; }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+/* Header & Typewriter */
+header {
+    padding: 50px 0;
+    border-bottom: 1px dashed #333;
+    margin-bottom: 40px;
+}
+
+.console-line {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.prompt { color: #00ff41; margin-right: 10px; }
+.cursor { animation: blink 1s infinite; }
+
+@keyframes blink { 50% { opacity: 0; } }
+
+nav { display: flex; gap: 20px; font-size: 1.1rem; }
+
+/* Section Headers */
+h2 {
+    color: #00ff41;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* Filtering Buttons */
+.filter-buttons { margin-bottom: 30px; }
+.btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: 'Fira Code', monospace;
+    transition: 0.3s;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.btn:hover, .btn.active {
+    border-color: #00ff41;
+    color: #00ff41;
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.gallery-item {
+    position: relative;
+    border: 1px solid #222;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    filter: grayscale(20%); /* Slight mute for vibe */
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+    filter: grayscale(0%);
+}
+
+/* Hover Overlay */
+.overlay {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    color: #00ff41;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    transition: .5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.8rem;
+    border-top: 1px solid #00ff41;
+}
+
+.gallery-item:hover .overlay { height: 100px; }
+
+/* CV Section */
+.cv-content {
+    border-left: 2px solid #333;
+    padding-left: 20px;
+}
+.keyword { color: #00ff41; font-weight: bold; }
+ul { list-style: none; }
+
+/* Footer */
+footer {
+    margin-top: 50px;
+    border-top: 1px dashed #333;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+/* Optional Star Background (Pure CSS) */
+#stars {
+    width: 1px; height: 1px;
+    background: transparent;
+    box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 422px 562px #FFF; /* Add hundreds more via JS or generator for better effect */
+    animation: animStar 50s linear infinite;
+    position: fixed; top: 0; left: 0; z-index: -1;
+}
+@keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .gallery-grid { grid-template-columns: 1fr; }
+    .console-line { font-size: 1rem; }
+}
