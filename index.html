@@ -3,108 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroTerminal</title>
+    <title>Iván López Muñoz | Astro Gallery</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Font for Console Look -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Montserrat for headers, Open Sans for text -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Background Stars -->
-    <div id="stars"></div>
-    <div id="stars2"></div>
-    <div id="stars3"></div>
+    <!-- Audio Element (Hidden) -->
+    <!-- Replace 'ambient.mp3' with your actual file in an audio folder -->
+    <audio id="bg-music" loop>
+        <source src="assets/ambient.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 1. Intro Overlay (Required for Audio Autoplay policies) -->
+    <div id="intro-overlay">
+        <div class="intro-content">
+            <h1>IVÁN LÓPEZ MUÑOZ</h1>
+            <p>Data Scientist | Astrophotographer</p>
+            <button id="start-btn">ENTER UNIVERSE</button>
+        </div>
+    </div>
+
+    <!-- Background Effects -->
+    <div class="bg-nebula"></div>
+    <div class="stars-container">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav>
+        <div class="logo">IVAN.LM99</div>
+        <div class="nav-links">
+            <button class="nav-btn active" onclick="switchTab('gallery')">GALLERY</button>
+            <button class="nav-btn" onclick="switchTab('cv')">CV & PORTFOLIO</button>
+        </div>
+        <div class="audio-control" onclick="toggleAudio()">
+            <i class="fas fa-volume-mute" id="audio-icon"></i>
+        </div>
+    </nav>
 
     <div class="container">
-        <!-- Header / Console Area -->
-        <header>
-            <div class="console-line">
-                <span class="prompt">user@universe:~$</span>
-                <span id="typewriter"></span><span class="cursor">|</span>
-            </div>
-            <nav>
-                <a href="#gallery">[ GALLERY ]</a>
-                <a href="#cv">[ CV_PORTFOLIO ]</a>
-                <a href="#contact">[ CONTACT ]</a>
-            </nav>
+        
+        <!-- HEADER SECTION (Cinematic Typewriter) -->
+        <header id="main-header">
+            <h1 id="typewriter"></h1>
+            <p class="subtitle">Capturing the cosmos from Palma de Mallorca</p>
         </header>
 
-        <!-- Gallery Section -->
-        <section id="gallery">
-            <h2>> ./load_images.sh</h2>
+        <!-- === GALLERY TAB === -->
+        <section id="gallery-view" class="view-section active">
             
             <!-- Filters -->
-            <div class="filter-buttons">
-                <button class="btn active" onclick="filterImages('all')">ALL</button>
-                <button class="btn" onclick="filterImages('moon')">MOON</button>
-                <button class="btn" onclick="filterImages('dso')">DEEP_SKY</button>
-                <button class="btn" onclick="filterImages('landscape')">LANDSCAPES</button>
-                <button class="btn" onclick="filterImages('planetary')">PLANETARY</button>
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterImages('all')">All</button>
+                <button class="filter-btn" onclick="filterImages('moon')">Moon</button>
+                <button class="filter-btn" onclick="filterImages('dso')">Deep Sky</button>
+                <button class="filter-btn" onclick="filterImages('landscape')">Landscapes</button>
             </div>
 
-            <!-- Image Grid -->
+            <!-- Gallery Grid -->
             <div class="gallery-grid">
-                <!-- Example Image 1 -->
-                <div class="gallery-item moon">
-                    <img src="https://via.placeholder.com/400x400/000000/FFFFFF?text=Moon+Phase" alt="Moon">
-                    <div class="overlay">
-                        <div class="text">OBJECT: MOON<br>ISO: 100<br>EXP: 1/200s</div>
+                
+                <!-- Image 1: Moon (Example) -->
+                <!-- Add data-attributes for the info you want in the lightbox -->
+                <div class="gallery-item moon" 
+                     onclick="openLightbox(this)" 
+                     data-title="Waxing Gibbous"
+                     data-date="2025-08-12"
+                     data-obj="Moon"
+                     data-exp="10ms"
+                     data-equip="Seestar S50">
+                    <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=800&auto=format&fit=crop" alt="Moon">
+                    <div class="hover-info">
+                        <h3>THE MOON</h3>
+                        <p>Click to Expand</p>
                     </div>
                 </div>
 
-                <!-- Example Image 2 -->
-                <div class="gallery-item dso">
-                    <img src="https://via.placeholder.com/400x400/111111/FFFFFF?text=Orion+Nebula" alt="Orion">
-                    <div class="overlay">
-                        <div class="text">OBJECT: M42<br>INT: 2 HRS<br>FILTER: Ha</div>
+                <!-- Image 2: Nebula (Example) -->
+                <div class="gallery-item dso" 
+                     onclick="openLightbox(this)" 
+                     data-title="Orion Nebula (M42)"
+                     data-date="2025-01-10"
+                     data-obj="M42"
+                     data-exp="30 Min Stack"
+                     data-equip="Seestar S50">
+                    <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=800&auto=format&fit=crop" alt="Orion">
+                    <div class="hover-info">
+                        <h3>ORION NEBULA</h3>
+                        <p>Click to Expand</p>
                     </div>
                 </div>
 
-                <!-- Example Image 3 -->
-                <div class="gallery-item landscape">
-                    <img src="https://via.placeholder.com/400x400/222222/FFFFFF?text=Milky+Way" alt="Milky Way">
-                    <div class="overlay">
-                        <div class="text">LOC: DESERT<br>LENS: 14MM<br>STACKED</div>
+                <!-- Image 3: Landscape (Example) -->
+                <div class="gallery-item landscape" 
+                     onclick="openLightbox(this)" 
+                     data-title="Mallorca Coast Night"
+                     data-date="2024-06-15"
+                     data-obj="Milky Way Core"
+                     data-exp="20s ISO 3200"
+                     data-equip="Olympus E420">
+                    <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=800&auto=format&fit=crop" alt="Landscape">
+                    <div class="hover-info">
+                        <h3>MALLORCA COAST</h3>
+                        <p>Click to Expand</p>
                     </div>
                 </div>
-                 <!-- Example Image 4 -->
-                 <div class="gallery-item planetary">
-                    <img src="https://via.placeholder.com/400x400/000000/FFFFFF?text=Jupiter" alt="Jupiter">
-                    <div class="overlay">
-                        <div class="text">OBJECT: JUPITER<br>FPS: 120<br>C11 EDGE HD</div>
+
+            </div>
+        </section>
+
+        <!-- === CV / PORTFOLIO TAB === -->
+        <section id="cv-view" class="view-section hidden">
+            <div class="cv-container">
+                
+                <div class="cv-header">
+                    <div class="cv-photo">
+                        <!-- Put your photo here -->
+                        <img src="assets/profile.jpg" alt="Iván López Muñoz" onerror="this.src='https://via.placeholder.com/150'">
+                    </div>
+                    <div class="cv-title">
+                        <h2>Iván López Muñoz</h2>
+                        <h4>Data Scientist | AI Engineer</h4>
+                        <div class="contact-links">
+                            <a href="mailto:ivan1999spain@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+                            <a href="https://linkedin.com/in/lmivan" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                            <a href="https://github.com/IvanLM99" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cv-grid">
+                    <div class="cv-left">
+                        <h3><i class="fas fa-microchip"></i> Skills</h3>
+                        <ul>
+                            <li>Python & Deep Learning (PyTorch, TensorFlow)</li>
+                            <li>Computer Vision (YOLO, Mask2Former)</li>
+                            <li>Google Cloud & AWS</li>
+                            <li>Generative AI (LLMs, Gemini)</li>
+                            <li>Data Visualization (PowerBI, Looker)</li>
+                        </ul>
+
+                        <h3><i class="fas fa-camera-retro"></i> Equipment</h3>
+                        <ul>
+                            <li><strong>Main:</strong> Seestar S50 (Smart Telescope)</li>
+                            <li><strong>Wide Field:</strong> Olympus E420</li>
+                            <li><strong>Processing:</strong> PixInsight, Photoshop, Python Scripts</li>
+                        </ul>
+
+                        <h3><i class="fas fa-language"></i> Languages</h3>
+                        <ul>
+                            <li>Spanish (Native)</li>
+                            <li>Catalan (Native)</li>
+                            <li>English (B2)</li>
+                        </ul>
+                    </div>
+
+                    <div class="cv-right">
+                        <h3><i class="fas fa-briefcase"></i> Professional Experience</h3>
+                        
+                        <div class="job">
+                            <h4>RIU Hotels & Resorts</h4>
+                            <span class="date">May 2025 - Present | AI Engineer</span>
+                            <p>Leading the RIUVanguard AI Hub. Developing Python solutions on Google Cloud, automating processes with AI, and creating dashboards.</p>
+                        </div>
+                        
+                        <div class="job">
+                            <h4>Decode Ingeniería</h4>
+                            <span class="date">Apr 2024 - Oct 2024 | Data Scientist</span>
+                            <p>Developed "Gemminis": Digital inventory of Palma's roads using Computer Vision. Trained Deep Learning models (YOLO, Detectron) for object detection on TBs of images.</p>
+                        </div>
+
+                        <div class="job">
+                            <h4>Emaya</h4>
+                            <span class="date">Oct 2022 - May 2023 | Data Analyst</span>
+                            <p>Fleet management analysis and environmental reporting using Excel and QlikView.</p>
+                        </div>
+
+                        <h3><i class="fas fa-graduation-cap"></i> Education</h3>
+                        <div class="edu">
+                            <h4>Master in AI & Data Science</h4>
+                            <span>UIB (2023 - 2024)</span>
+                        </div>
+                        <div class="edu">
+                            <h4>Degree in Industrial Electronics Engineering</h4>
+                            <span>UIB (2017 - 2023)</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CV Section -->
-        <section id="cv">
-            <h2>> cat cv.txt</h2>
-            <div class="cv-content">
-                <p><span class="keyword">NAME:</span> John Doe</p>
-                <p><span class="keyword">ROLE:</span> Astrophotographer & Developer</p>
-                <p><span class="keyword">EXP:</span> 5+ Years in Imaging</p>
-                <br>
-                <p>--- SKILLS ---</p>
-                <ul>
-                    <li>> PixInsight / Photoshop</li>
-                    <li>> Python / Data Analysis</li>
-                    <li>> Hardware Integration</li>
-                </ul>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <div class="lightbox-content">
+            <img id="lb-img" src="" alt="">
+            <div class="lb-details">
+                <h2 id="lb-title">Object Name</h2>
+                <div class="detail-row">
+                    <span><i class="far fa-calendar-alt"></i> Date:</span>
+                    <span id="lb-date">--</span>
+                </div>
+                <div class="detail-row">
+                    <span><i class="fas fa-crosshairs"></i> Object:</span>
+                    <span id="lb-obj">--</span>
+                </div>
+                <div class="detail-row">
+                    <span><i class="fas fa-stopwatch"></i> Exposure:</span>
+                    <span id="lb-exp">--</span>
+                </div>
+                <div class="detail-row">
+                    <span><i class="fas fa-camera"></i> Equipment:</span>
+                    <span id="lb-equip">--</span>
+                </div>
             </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact">
-            <h2>> ./send_transmission.exe</h2>
-            <p>Connect via subspace frequencies:</p>
-            <p><a href="mailto:email@example.com">email@example.com</a></p>
-            <p><a href="#">instagram/astrouser</a></p>
-        </section>
-
-        <footer>
-            <p>SYSTEM STATUS: ONLINE. &copy; 2024</p>
-        </footer>
+        </div>
     </div>
 
     <script src="script.js"></script>
