@@ -2,7 +2,7 @@
 const translations = {
     "en": {
         "nav_gallery": "GALLERY",
-        "nav_portfolio": "JOURNEY & PORTFOLIO",
+        "nav_portfolio": "MY UNIVERSE",
         "details": "DETAILS",
         "story1_title": "The First Glimpse",
         "story1_text": "It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.",
@@ -22,30 +22,25 @@ const translations = {
         "job2_place": "Engineering & Innovation Firm",
         "job2_date": "Apr 2024 - Oct 2024",
         "job2_desc": "Developed Computer Vision models (YOLO, Detectron) to digitize road infrastructure assets from terabytes of visual data. Built deep learning pipelines for object detection.",
-        "job3_role": "Data Analyst",
-        "job3_place": "Public Utility Services",
-        "job3_date": "Oct 2022 - May 2023",
-        "job3_desc": "Optimized fleet efficiency and environmental reporting using BI tools and statistical analysis for large-scale urban infrastructure.",
         "edu1_role": "Master in Artificial Intelligence",
         "edu1_place": "University of the Balearic Islands",
-        "edu2_role": "B.S. Industrial Electronics Engineering",
-        "edu2_place": "University of the Balearic Islands",
         "contact_quote": "\"Somewhere, something incredible is waiting to be known.\"",
         "lb_obj": "OBJECT",
         "lb_date": "DATE",
         "lb_exp": "EXPOSURE",
         "lb_equip": "EQUIPMENT",
-        "zoom_hint": "Click image to zoom",
         "filter_all": "All",
         "filter_moon": "Moon",
         "filter_dso": "Deep Sky",
         "filter_landscape": "Landscapes",
-        "filter_sky": "Sky",
-        "filter_solar": "Solar"
+        "filter_planets": "Planets",
+        "filter_nebulae": "Nebulae",
+        "filter_galaxies": "Galaxies",
+        "filter_clusters": "Clusters"
     },
     "es": {
         "nav_gallery": "GALERÍA",
-        "nav_portfolio": "VIAJE Y PORTFOLIO",
+        "nav_portfolio": "MI UNIVERSO",
         "details": "DETALLES",
         "story1_title": "El Primer Vistazo",
         "story1_text": "No se trataba solo de mirar hacia arriba; se trataba de entender la escala de todo. El silencio del cielo nocturno en Mallorca ofrecía una perspectiva que el ruido del día nunca podría proporcionar. Me di cuenta de que cada fotón que golpeaba mi sensor había viajado miles de años solo para terminar su viaje aquí.",
@@ -65,31 +60,26 @@ const translations = {
         "job2_place": "Firma de Ingeniería e Innovación",
         "job2_date": "Abr 2024 - Oct 2024",
         "job2_desc": "Desarrollo de modelos de Visión por Computador (YOLO, Detectron) para digitalizar activos de infraestructura vial a partir de terabytes de datos visuales.",
-        "job3_role": "Analista de Datos",
-        "job3_place": "Servicios Públicos",
-        "job3_date": "Oct 2022 - May 2023",
-        "job3_desc": "Optimización de la eficiencia de la flota e informes ambientales utilizando herramientas de BI y análisis estadístico para infraestructura urbana a gran escala.",
         "edu1_role": "Máster en Inteligencia Artificial",
         "edu1_place": "Universitat de les Illes Balears",
-        "edu2_role": "Grado en Ing. Electrónica Industrial",
-        "edu2_place": "Universitat de les Illes Balears",
         "contact_quote": "\"En algún lugar, algo increíble está esperando ser conocido.\"",
         "lb_obj": "OBJETO",
         "lb_date": "FECHA",
         "lb_exp": "EXPOSICIÓN",
         "lb_equip": "EQUIPO",
-        "zoom_hint": "Haz clic para hacer zoom",
         "filter_all": "Todo",
         "filter_moon": "Luna",
         "filter_dso": "Cielo Profundo",
         "filter_landscape": "Paisajes",
-        "filter_sky": "Cielo",
-        "filter_solar": "Solar"
+        "filter_planets": "Planetas",
+        "filter_nebulae": "Nebulosas",
+        "filter_galaxies": "Galaxias",
+        "filter_clusters": "Cúmulos"
     }
 };
 
 let currentLang = 'en';
-let galleryData = []; // Will hold JSON data
+let galleryData = [];
 
 /* === INIT & FETCH DATA === */
 document.addEventListener('DOMContentLoaded', () => {
@@ -100,13 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
             renderGallery(data);
         })
         .catch(err => console.error('Error loading gallery data:', err));
+    
+    // Shuffle quotes initially
+    shuffleQuotes();
 });
 
 /* === LANGUAGE HANDLING === */
 function setLanguage(lang) {
     currentLang = lang;
     
-    // Update elements with data-t attributes
     const elements = document.querySelectorAll('[data-t]');
     elements.forEach(function(el) {
         const key = el.getAttribute('data-t');
@@ -115,74 +107,49 @@ function setLanguage(lang) {
         }
     });
 
-    // Update Nav Buttons manually
     const btnGal = document.getElementById('btn-gallery');
-    const btnPort = document.getElementById('btn-portfolio');
+    const btnUni = document.getElementById('btn-universe');
     if(btnGal) btnGal.textContent = translations[lang].nav_gallery;
-    if(btnPort) btnPort.textContent = translations[lang].nav_portfolio;
+    if(btnUni) btnUni.textContent = translations[lang].nav_portfolio;
 
-    // Toggle Active State
     document.getElementById('lang-en').classList.toggle('active', lang === 'en');
     document.getElementById('lang-es').classList.toggle('active', lang === 'es');
 
-    // Update Quote immediately
     updateQuoteDisplay();
 }
 
-/* === ROTATING QUOTES (BILIGUAL) === */
+/* === EXPANDED QUOTES (BILIGUAL) === */
 const quotes = [
-    { 
-        text_en: "\"We are made of starstuff.\"", 
-        text_es: "\"Estamos hechos de polvo de estrellas.\"", 
-        author: "- Carl Sagan" 
-    },
-    { 
-        text_en: "\"Somewhere, something incredible is waiting to be known.\"", 
-        text_es: "\"En algún lugar, algo increíble espera ser descubierto.\"", 
-        author: "- Carl Sagan" 
-    },
-    { 
-        text_en: "\"Eppur si muove.\"", 
-        text_es: "\"Y sin embargo, se mueve.\"", 
-        author: "- Galileo Galilei" 
-    },
-    { 
-        text_en: "\"Look up at the stars and not down at your feet.\"", 
-        text_es: "\"Mira a las estrellas y no a tus pies.\"", 
-        author: "- Stephen Hawking" 
-    },
-    { 
-        text_en: "\"The universe is under no obligation to make sense to you.\"", 
-        text_es: "\"El universo no tiene la obligación de tener sentido para ti.\"", 
-        author: "- Neil deGrasse Tyson" 
-    },
-    { 
-        text_en: "\"Two things are infinite: the universe and human stupidity.\"", 
-        text_es: "\"Dos cosas son infinitas: el universo y la estupidez humana.\"", 
-        author: "- Albert Einstein" 
-    },
-    {
-        text_en: "\"Equipped with his five senses, man explores the universe around him and calls the adventure Science.\"",
-        text_es: "\"Equipado con sus cinco sentidos, el hombre explora el universo que lo rodea y llama a la aventura Ciencia.\"",
-        author: "- Edwin Hubble"
-    },
-    {
-        text_en: "\"For small creatures such as we the vastness is bearable only through love.\"",
-        text_es: "\"Para criaturas pequeñas como nosotros, la inmensidad es soportable solo a través del amor.\"",
-        author: "- Carl Sagan"
-    }
+    { text_en: "\"We are made of starstuff.\"", text_es: "\"Estamos hechos de polvo de estrellas.\"", author: "- Carl Sagan" },
+    { text_en: "\"Somewhere, something incredible is waiting to be known.\"", text_es: "\"En algún lugar, algo increíble espera ser descubierto.\"", author: "- Carl Sagan" },
+    { text_en: "\"Eppur si muove.\"", text_es: "\"Y sin embargo, se mueve.\"", author: "- Galileo Galilei" },
+    { text_en: "\"Look up at the stars and not down at your feet.\"", text_es: "\"Mira a las estrellas y no a tus pies.\"", author: "- Stephen Hawking" },
+    { text_en: "\"The universe is under no obligation to make sense to you.\"", text_es: "\"El universo no tiene la obligación de tener sentido para ti.\"", author: "- Neil deGrasse Tyson" },
+    { text_en: "\"Two things are infinite: the universe and human stupidity.\"", text_es: "\"Dos cosas son infinitas: el universo y la estupidez humana.\"", author: "- Albert Einstein" },
+    { text_en: "\"The cosmos is within us. We are a way for the universe to know itself.\"", text_es: "\"El cosmos está dentro de nosotros. Somos una forma de que el universo se conozca a sí mismo.\"", author: "- Carl Sagan" },
+    { text_en: "\"Astronomy compels the soul to look upwards and leads us from this world to another.\"", text_es: "\"La astronomía obliga al alma a mirar hacia arriba y nos lleva de este mundo a otro.\"", author: "- Plato" },
+    { text_en: "\"All truths are easy to understand once they are discovered; the point is to discover them.\"", text_es: "\"Todas las verdades son fáciles de entender una vez descubiertas; el punto es descubrirlas.\"", author: "- Galileo Galilei" },
+    { text_en: "\"The important thing is not to stop questioning. Curiosity has its own reason for existing.\"", text_es: "\"Lo importante es no dejar de cuestionar. La curiosidad tiene su propia razón de existir.\"", author: "- Albert Einstein" },
+    { text_en: "\"There are as many atoms in a single molecule of your DNA as there are stars in the typical galaxy.\"", text_es: "\"Hay tantos átomos en una sola molécula de tu ADN como estrellas en una galaxia típica.\"", author: "- Neil deGrasse Tyson" },
+    { text_en: "\"I loved the stars too fondly to be fearful of the night.\"", text_es: "\"Amé las estrellas con demasiado cariño como para tener miedo de la noche.\"", author: "- Sarah Williams" },
+    { text_en: "\"Mystery creates wonder and wonder is the basis of man's desire to understand.\"", text_es: "\"El misterio crea asombro y el asombro es la base del deseo del hombre por comprender.\"", author: "- Neil Armstrong" }
 ];
 
 let quoteIndex = 0;
 const quoteTextEl = document.getElementById('quote-text');
 const quoteAuthEl = document.getElementById('quote-author');
 
+function shuffleQuotes() {
+    for (let i = quotes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [quotes[i], quotes[j]] = [quotes[j], quotes[i]];
+    }
+}
+
 function updateQuoteDisplay() {
     if(!quoteTextEl || !quoteAuthEl) return;
-    
     const q = quotes[quoteIndex];
     const text = currentLang === 'en' ? q.text_en : q.text_es;
-    
     quoteTextEl.textContent = text;
     quoteAuthEl.textContent = q.author;
 }
@@ -193,6 +160,9 @@ function cycleQuotes() {
 
     setTimeout(function() {
         quoteIndex = (quoteIndex + 1) % quotes.length;
+        // Reshuffle if we hit the end
+        if(quoteIndex === 0) shuffleQuotes();
+        
         updateQuoteDisplay();
         
         quoteTextEl.classList.add('visible');
@@ -200,7 +170,6 @@ function cycleQuotes() {
     }, 1000); 
 }
 
-// Init quotes loop
 setTimeout(function() {
     if(quoteTextEl) quoteTextEl.classList.add('visible');
     if(quoteAuthEl) quoteAuthEl.classList.add('visible');
@@ -210,19 +179,16 @@ setTimeout(function() {
 /* === DYNAMIC GALLERY RENDER === */
 function renderGallery(data) {
     const container = document.getElementById('dynamic-gallery-root');
-    container.innerHTML = ''; // Clear existing
+    container.innerHTML = '';
 
-    // Group by Year
     const grouped = data.reduce((acc, item) => {
         (acc[item.year] = acc[item.year] || []).push(item);
         return acc;
     }, {});
 
-    // Sort years descending
     const years = Object.keys(grouped).sort((a, b) => b - a);
 
     years.forEach(year => {
-        // Create Year Section
         const yearSection = document.createElement('div');
         yearSection.className = 'year-section';
         yearSection.id = `year-${year}`;
@@ -235,13 +201,10 @@ function renderGallery(data) {
         const grid = document.createElement('div');
         grid.className = 'gallery-grid';
 
-        // Add Items
         grouped[year].forEach(item => {
             const itemDiv = document.createElement('div');
             itemDiv.className = `g-item ${item.category}`;
-            // Store data directly on element for easy retrieval
             itemDiv.dataset.json = JSON.stringify(item);
-            
             itemDiv.onclick = function() { openLightbox(this); };
 
             itemDiv.innerHTML = `
@@ -255,7 +218,6 @@ function renderGallery(data) {
         container.appendChild(yearSection);
     });
 
-    // Apply current translations to new elements (Details buttons)
     setLanguage(currentLang);
 }
 
@@ -264,19 +226,19 @@ function switchTab(tabName) {
     const gallery = document.getElementById('gallery-tab');
     const portfolio = document.getElementById('portfolio-tab');
     const btnGallery = document.getElementById('btn-gallery');
-    const btnPortfolio = document.getElementById('btn-portfolio');
+    const btnUniverse = document.getElementById('btn-universe');
 
     if(tabName === 'gallery') {
         gallery.classList.remove('hidden');
         gallery.classList.add('fade-in');
         portfolio.classList.add('hidden');
         btnGallery.classList.add('active');
-        btnPortfolio.classList.remove('active');
+        btnUniverse.classList.remove('active');
     } else {
         portfolio.classList.remove('hidden');
         portfolio.classList.add('fade-in');
         gallery.classList.add('hidden');
-        btnPortfolio.classList.add('active');
+        btnUniverse.classList.add('active');
         btnGallery.classList.remove('active');
     }
 }
@@ -302,7 +264,6 @@ function filterGallery(category, clickedBtn) {
             }
         });
 
-        // Hide section if empty
         if (visibleCount === 0) {
             section.style.display = 'none';
         } else {
@@ -319,15 +280,12 @@ function openLightbox(elem) {
     const data = JSON.parse(elem.dataset.json);
 
     lbImg.src = data.src;
-    lbImg.classList.remove('zoomed'); // Reset zoom
     
-    // Set bilingual text based on currentLang
     const title = currentLang === 'en' ? data.title_en : data.title_es;
     const story = currentLang === 'en' ? data.story_en : data.story_es;
 
     document.getElementById('lb-title').innerText = title || data.object;
     
-    // Story Logic
     const storyContainer = document.getElementById('lb-story-container');
     const storyText = document.getElementById('lb-story-text');
     
@@ -348,18 +306,10 @@ function openLightbox(elem) {
 
 function closeLightbox() {
     lightbox.classList.remove('active');
-    setTimeout(() => {
-        lbImg.classList.remove('zoomed');
-    }, 300);
-}
-
-function toggleZoom(img) {
-    img.classList.toggle('zoomed');
 }
 
 if(lightbox) {
     lightbox.addEventListener('click', function(e) {
-        // Close if clicking outside the image or info
         if(e.target === lightbox || e.target.classList.contains('lb-content')) {
             closeLightbox();
         }
@@ -369,3 +319,27 @@ if(lightbox) {
 document.addEventListener('keydown', function(e) {
     if (e.key === "Escape") closeLightbox();
 });
+
+/* === NAVBAR FADE & SCROLL TO TOP === */
+const navbar = document.getElementById('navbar');
+const scrollTopBtn = document.getElementById('scroll-top-btn');
+
+window.onscroll = function() {
+    // Navbar Fade
+    if (window.scrollY > 50) {
+        navbar.classList.add('nav-faded');
+    } else {
+        navbar.classList.remove('nav-faded');
+    }
+
+    // Scroll Top Button Visibility
+    if (window.scrollY > 500) {
+        scrollTopBtn.classList.add('visible');
+    } else {
+        scrollTopBtn.classList.remove('visible');
+    }
+};
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
