@@ -10,15 +10,20 @@
 </head>
 <body>
 
+    <!-- AUDIO: Rename your file to bg.mp3 for best results -->
+    <!-- If you keep the long name, ensure it matches exactly in the folder -->
     <audio id="bg-music" loop>
-        <source src="audio/Silent Hill 2 Remake OST - Mary's Letter Theme Original Soundtrack.mp3" type="audio/mpeg">
+        <source src="audio/Silent%20Hill%202%20Remake%20OST%20-%20Mary's%20Letter%20Theme%20Original%20Soundtrack.mp3" type="audio/mpeg">
+        <!-- Fallback if you renamed it -->
+        <source src="audio/bg.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- 1. BLACK HOLE LOADER (No Flash) -->
     <div id="loader-overlay">
-        <div class="supernova-core"></div>
-        <div class="flash-overlay"></div>
+        <div class="accretion-disk"></div>
     </div>
 
+    <!-- 2. NAVIGATION -->
     <nav>
         <div class="nav-left">
             <span class="site-title">I. LOPEZ</span>
@@ -37,8 +42,10 @@
         </div>
     </nav>
 
+    <!-- 3. MAIN CONTENT -->
     <main class="content-container">
 
+        <!-- GALLERY TAB -->
         <section id="gallery-tab" class="fade-in">
             
             <header class="gallery-header">
@@ -48,17 +55,18 @@
                 </div>
                 
                 <div class="filters">
-                    <button class="filter-btn active" data-filter="all" onclick="filterGallery('all', this)">All</button>
-                    <button class="filter-btn" data-filter="moon" onclick="filterGallery('moon', this)">Luna</button>
-                    <button class="filter-btn" data-filter="dso" onclick="filterGallery('dso', this)">Deep Sky</button>
-                    <button class="filter-btn" data-filter="landscape" onclick="filterGallery('landscape', this)">Landscapes</button>
+                    <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
+                    <button class="filter-btn" onclick="filterGallery('moon', this)">Luna</button>
+                    <button class="filter-btn" onclick="filterGallery('dso', this)">Deep Sky</button>
+                    <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscapes</button>
                 </div>
             </header>
 
+            <!-- 2025 SECTION -->
             <div class="year-section" id="year-2025">
                 <h2 class="year-title">2025</h2>
                 <div class="gallery-grid">
-                    
+                    <!-- Image 1 -->
                     <div class="g-item moon" onclick="openLightbox(this)" 
                         data-title="The Silent Witness" 
                         data-date="Aug 12, 2025" 
@@ -68,7 +76,7 @@
                         <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=800" alt="Moon">
                         <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
-
+                     <!-- Image 2 -->
                      <div class="g-item dso" onclick="openLightbox(this)" 
                         data-title="Stellar Nursery" 
                         data-date="May 04, 2025" 
@@ -78,14 +86,14 @@
                         <img src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=800" alt="Nebula">
                         <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
-
                 </div>
             </div>
 
+            <!-- 2024 SECTION -->
             <div class="year-section" id="year-2024">
                 <h2 class="year-title">2024</h2>
                 <div class="gallery-grid">
-                    
+                    <!-- Image 3 -->
                     <div class="g-item landscape" onclick="openLightbox(this)" 
                         data-title="Desert Solitude" 
                         data-date="July 2024" 
@@ -95,7 +103,7 @@
                         <img src="https://images.unsplash.com/photo-1504333638930-c8787321eee0?auto=format&fit=crop&w=800" alt="Milky Way">
                         <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
-
+                    <!-- Image 4 -->
                     <div class="g-item dso" onclick="openLightbox(this)" 
                         data-title="Ancient Light" 
                         data-date="Nov 2024" 
@@ -105,17 +113,15 @@
                         <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800" alt="Andromeda">
                         <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
-
                 </div>
             </div>
 
         </section>
 
-
+        <!-- PORTFOLIO TAB -->
         <section id="portfolio-tab" class="hidden">
             
             <div class="story-container">
-                
                 <div class="story-row">
                     <div class="story-img">
                         <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=800" alt="Night Sky">
@@ -153,24 +159,20 @@
                 <h2 class="cv-main-title" data-t="profile_title">Professional Profile</h2>
                 
                 <div class="cv-grid">
-                    
                     <div class="cv-col">
                         <h4 class="cv-section-head" data-t="exp_title">Experience</h4>
-                        
                         <div class="cv-item">
                             <span class="cv-role" data-t="job1_role">AI Engineer & Architect</span>
                             <span class="cv-place" data-t="job1_place">Multinational Hospitality Group</span>
                             <span class="cv-date" data-t="job1_date">May 2025 - Present</span>
                             <p data-t="job1_desc">Leading AI adoption strategies, defining corporate governance for Generative AI, and deploying LLM solutions (Gemini) across global departments to automate complex workflows.</p>
                         </div>
-
                         <div class="cv-item">
                             <span class="cv-role" data-t="job2_role">Data Scientist</span>
                             <span class="cv-place" data-t="job2_place">Engineering & Innovation Firm</span>
                             <span class="cv-date" data-t="job2_date">Apr 2024 - Oct 2024</span>
                             <p data-t="job2_desc">Developed Computer Vision models (YOLO, Detectron) to digitize road infrastructure assets from terabytes of visual data. Built deep learning pipelines for object detection.</p>
                         </div>
-
                         <div class="cv-item">
                             <span class="cv-role" data-t="job3_role">Data Analyst</span>
                             <span class="cv-place" data-t="job3_place">Public Utility Services</span>
@@ -218,6 +220,7 @@
 
     </main>
 
+    <!-- LIGHTBOX -->
     <div id="lightbox">
         <span class="close-lb" onclick="closeLightbox()">&times;</span>
         <div class="lb-content">
