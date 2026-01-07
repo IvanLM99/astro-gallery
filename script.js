@@ -34,7 +34,14 @@ const translations = {
         "lb_obj": "OBJECT",
         "lb_date": "DATE",
         "lb_exp": "EXPOSURE",
-        "lb_equip": "EQUIPMENT"
+        "lb_equip": "EQUIPMENT",
+        "zoom_hint": "Click image to zoom",
+        "filter_all": "All",
+        "filter_moon": "Moon",
+        "filter_dso": "Deep Sky",
+        "filter_landscape": "Landscapes",
+        "filter_sky": "Sky",
+        "filter_solar": "Solar"
     },
     "es": {
         "nav_gallery": "GALERÍA",
@@ -70,12 +77,32 @@ const translations = {
         "lb_obj": "OBJETO",
         "lb_date": "FECHA",
         "lb_exp": "EXPOSICIÓN",
-        "lb_equip": "EQUIPO"
+        "lb_equip": "EQUIPO",
+        "zoom_hint": "Haz clic para hacer zoom",
+        "filter_all": "Todo",
+        "filter_moon": "Luna",
+        "filter_dso": "Cielo Profundo",
+        "filter_landscape": "Paisajes",
+        "filter_sky": "Cielo",
+        "filter_solar": "Solar"
     }
 };
 
 let currentLang = 'en';
+let galleryData = []; // Will hold JSON data
 
+/* === INIT & FETCH DATA === */
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('gallery_data.json')
+        .then(response => response.json())
+        .then(data => {
+            galleryData = data;
+            renderGallery(data);
+        })
+        .catch(err => console.error('Error loading gallery data:', err));
+});
+
+/* === LANGUAGE HANDLING === */
 function setLanguage(lang) {
     currentLang = lang;
     
@@ -97,32 +124,76 @@ function setLanguage(lang) {
     // Toggle Active State
     document.getElementById('lang-en').classList.toggle('active', lang === 'en');
     document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+
+    // Update Quote immediately
+    updateQuoteDisplay();
 }
 
-/* === ROTATING QUOTES === */
+/* === ROTATING QUOTES (BILIGUAL) === */
 const quotes = [
-    { text: "\"We are made of starstuff.\"", author: "- Carl Sagan" },
-    { text: "\"Somewhere, something incredible is waiting to be known.\"", author: "- Carl Sagan" },
-    { text: "\"Eppur si muove.\"", author: "- Galileo Galilei" },
-    { text: "\"Look up at the stars and not down at your feet.\"", author: "- Stephen Hawking" },
-    { text: "\"The universe is under no obligation to make sense to you.\"", author: "- Neil deGrasse Tyson" },
-    { text: "\"Two things are infinite: the universe and human stupidity.\"", author: "- Albert Einstein" }
+    { 
+        text_en: "\"We are made of starstuff.\"", 
+        text_es: "\"Estamos hechos de polvo de estrellas.\"", 
+        author: "- Carl Sagan" 
+    },
+    { 
+        text_en: "\"Somewhere, something incredible is waiting to be known.\"", 
+        text_es: "\"En algún lugar, algo increíble espera ser descubierto.\"", 
+        author: "- Carl Sagan" 
+    },
+    { 
+        text_en: "\"Eppur si muove.\"", 
+        text_es: "\"Y sin embargo, se mueve.\"", 
+        author: "- Galileo Galilei" 
+    },
+    { 
+        text_en: "\"Look up at the stars and not down at your feet.\"", 
+        text_es: "\"Mira a las estrellas y no a tus pies.\"", 
+        author: "- Stephen Hawking" 
+    },
+    { 
+        text_en: "\"The universe is under no obligation to make sense to you.\"", 
+        text_es: "\"El universo no tiene la obligación de tener sentido para ti.\"", 
+        author: "- Neil deGrasse Tyson" 
+    },
+    { 
+        text_en: "\"Two things are infinite: the universe and human stupidity.\"", 
+        text_es: "\"Dos cosas son infinitas: el universo y la estupidez humana.\"", 
+        author: "- Albert Einstein" 
+    },
+    {
+        text_en: "\"Equipped with his five senses, man explores the universe around him and calls the adventure Science.\"",
+        text_es: "\"Equipado con sus cinco sentidos, el hombre explora el universo que lo rodea y llama a la aventura Ciencia.\"",
+        author: "- Edwin Hubble"
+    },
+    {
+        text_en: "\"For small creatures such as we the vastness is bearable only through love.\"",
+        text_es: "\"Para criaturas pequeñas como nosotros, la inmensidad es soportable solo a través del amor.\"",
+        author: "- Carl Sagan"
+    }
 ];
 
 let quoteIndex = 0;
 const quoteTextEl = document.getElementById('quote-text');
 const quoteAuthEl = document.getElementById('quote-author');
 
-function cycleQuotes() {
+function updateQuoteDisplay() {
     if(!quoteTextEl || !quoteAuthEl) return;
     
+    const q = quotes[quoteIndex];
+    const text = currentLang === 'en' ? q.text_en : q.text_es;
+    
+    quoteTextEl.textContent = text;
+    quoteAuthEl.textContent = q.author;
+}
+
+function cycleQuotes() {
     quoteTextEl.classList.remove('visible');
     quoteAuthEl.classList.remove('visible');
 
     setTimeout(function() {
         quoteIndex = (quoteIndex + 1) % quotes.length;
-        quoteTextEl.textContent = quotes[quoteIndex].text;
-        quoteAuthEl.textContent = quotes[quoteIndex].author;
+        updateQuoteDisplay();
         
         quoteTextEl.classList.add('visible');
         quoteAuthEl.classList.add('visible');
@@ -133,8 +204,60 @@ function cycleQuotes() {
 setTimeout(function() {
     if(quoteTextEl) quoteTextEl.classList.add('visible');
     if(quoteAuthEl) quoteAuthEl.classList.add('visible');
-    setInterval(cycleQuotes, 6000); 
+    setInterval(cycleQuotes, 8000); 
 }, 3000);
+
+/* === DYNAMIC GALLERY RENDER === */
+function renderGallery(data) {
+    const container = document.getElementById('dynamic-gallery-root');
+    container.innerHTML = ''; // Clear existing
+
+    // Group by Year
+    const grouped = data.reduce((acc, item) => {
+        (acc[item.year] = acc[item.year] || []).push(item);
+        return acc;
+    }, {});
+
+    // Sort years descending
+    const years = Object.keys(grouped).sort((a, b) => b - a);
+
+    years.forEach(year => {
+        // Create Year Section
+        const yearSection = document.createElement('div');
+        yearSection.className = 'year-section';
+        yearSection.id = `year-${year}`;
+
+        const yearTitle = document.createElement('h2');
+        yearTitle.className = 'year-title';
+        yearTitle.textContent = year;
+        yearSection.appendChild(yearTitle);
+
+        const grid = document.createElement('div');
+        grid.className = 'gallery-grid';
+
+        // Add Items
+        grouped[year].forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `g-item ${item.category}`;
+            // Store data directly on element for easy retrieval
+            itemDiv.dataset.json = JSON.stringify(item);
+            
+            itemDiv.onclick = function() { openLightbox(this); };
+
+            itemDiv.innerHTML = `
+                <img src="${item.src}" alt="${item.object}" loading="lazy">
+                <div class="overlay"><span data-t="details">DETAILS</span></div>
+            `;
+            grid.appendChild(itemDiv);
+        });
+
+        yearSection.appendChild(grid);
+        container.appendChild(yearSection);
+    });
+
+    // Apply current translations to new elements (Details buttons)
+    setLanguage(currentLang);
+}
 
 /* === TAB SWITCHING === */
 function switchTab(tabName) {
@@ -190,48 +313,59 @@ function filterGallery(category, clickedBtn) {
 
 /* === LIGHTBOX === */
 const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
 
 function openLightbox(elem) {
-    const imgSrc = elem.querySelector('img').src;
-    const title = elem.dataset.title;
-    const obj = elem.dataset.obj;
-    const date = elem.dataset.date;
-    const exp = elem.dataset.exp;
-    const equip = elem.dataset.equip;
+    const data = JSON.parse(elem.dataset.json);
 
-    document.getElementById('lb-img').src = imgSrc;
-    document.getElementById('lb-title').innerText = title;
+    lbImg.src = data.src;
+    lbImg.classList.remove('zoomed'); // Reset zoom
     
-    document.getElementById('val-obj').innerText = obj;
-    document.getElementById('val-date').innerText = date;
-    document.getElementById('val-exp').innerText = exp;
-    document.getElementById('val-equip').innerText = equip;
+    // Set bilingual text based on currentLang
+    const title = currentLang === 'en' ? data.title_en : data.title_es;
+    const story = currentLang === 'en' ? data.story_en : data.story_es;
+
+    document.getElementById('lb-title').innerText = title || data.object;
+    
+    // Story Logic
+    const storyContainer = document.getElementById('lb-story-container');
+    const storyText = document.getElementById('lb-story-text');
+    
+    if (story && story.trim() !== "") {
+        storyContainer.style.display = 'block';
+        storyText.innerText = story;
+    } else {
+        storyContainer.style.display = 'none';
+    }
+
+    document.getElementById('val-obj').innerText = data.object;
+    document.getElementById('val-date').innerText = data.date;
+    document.getElementById('val-exp').innerText = data.exposure;
+    document.getElementById('val-equip').innerText = data.equipment;
 
     lightbox.classList.add('active');
 }
 
 function closeLightbox() {
     lightbox.classList.remove('active');
+    setTimeout(() => {
+        lbImg.classList.remove('zoomed');
+    }, 300);
+}
+
+function toggleZoom(img) {
+    img.classList.toggle('zoomed');
 }
 
 if(lightbox) {
     lightbox.addEventListener('click', function(e) {
-        if(e.target === lightbox) closeLightbox();
+        // Close if clicking outside the image or info
+        if(e.target === lightbox || e.target.classList.contains('lb-content')) {
+            closeLightbox();
+        }
     });
 }
 
 document.addEventListener('keydown', function(e) {
     if (e.key === "Escape") closeLightbox();
 });
-
-/* === AUDIO PLAY ON INTERACTION === */
-// Browsers block autoplay. This waits for the first click anywhere to start music.
-document.addEventListener('click', function() {
-    const audio = document.getElementById('bg-music');
-    if (audio && audio.paused) {
-        audio.volume = 0.5;
-        audio.play().catch(function(e) {
-            console.log("Audio play prevented:", e);
-        });
-    }
-}, { once: true });
