@@ -17,7 +17,7 @@ body {
     min-height: 100vh;
 }
 
-/* === 1. BLACK HOLE LOADER (RESTORED, NO FLASH) === */
+/* === 1. BLACK HOLE & SUPERNOVA LOADER === */
 #loader-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100vh;
@@ -26,19 +26,36 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Fade out the whole overlay at the end */
-    animation: fadeOutContainer 2s ease-in-out 3s forwards;
+    animation: fadeOutContainer 1s ease-in-out 3.5s forwards;
     pointer-events: none;
+}
+
+.loader-container {
+    position: relative;
+    width: 300px; height: 300px;
+    display: flex; justify-content: center; align-items: center;
 }
 
 .accretion-disk {
     width: 0px; height: 0px;
     border-radius: 50%;
-    /* The glowing ring */
     box-shadow: 0 0 60px 20px rgba(255, 255, 255, 1);
     background: #000;
-    /* Implode animation */
     animation: implode 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    position: absolute;
+    z-index: 2;
+}
+
+.supernova-burst {
+    width: 0px; height: 0px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #0ff 40%, #f0f 70%, transparent 100%);
+    position: absolute;
+    z-index: 3;
+    mix-blend-mode: screen;
+    opacity: 0;
+    /* Starts after implode finishes (approx 2.8s) */
+    animation: supernova 0.8s ease-out 2.8s forwards;
 }
 
 @keyframes implode {
@@ -48,11 +65,17 @@ body {
     100% { width: 0px; height: 0px; opacity: 0; transform: scale(0); }
 }
 
+@keyframes supernova {
+    0% { width: 10px; height: 10px; opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; }
+    100% { width: 600px; height: 600px; opacity: 0; transform: scale(2); }
+}
+
 @keyframes fadeOutContainer {
     to { opacity: 0; visibility: hidden; }
 }
 
-/* === NAVIGATION (MOBILE FIXES) === */
+/* === NAVIGATION === */
 nav {
     display: flex;
     justify-content: space-between;
@@ -64,7 +87,7 @@ nav {
     backdrop-filter: blur(10px);
     z-index: 100;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-    flex-wrap: wrap; /* Allows wrapping on mobile */
+    flex-wrap: wrap;
 }
 
 .site-title {
@@ -74,9 +97,7 @@ nav {
     color: var(--accent);
 }
 
-.nav-center {
-    display: flex; gap: 10px;
-}
+.nav-center { display: flex; gap: 10px; }
 
 .menu-btn {
     background: none; border: none;
@@ -154,8 +175,9 @@ nav {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 4px; 
+    /* Increased margin/gap between images */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px; 
 }
 
 /* COLOR TO B/W LOGIC */
@@ -164,12 +186,13 @@ nav {
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    filter: grayscale(0%) contrast(1); /* Color by default */
+    filter: grayscale(0%) contrast(1);
     transition: filter 0.5s ease;
+    border-radius: 2px; /* Slight rounding for aesthetics */
 }
 
 .g-item:hover { 
-    filter: grayscale(100%) contrast(1.2); /* B/W on hover */
+    filter: grayscale(100%) contrast(1.2);
 }
 
 .g-item img {
@@ -271,25 +294,51 @@ nav {
 .lb-content { 
     display: flex; flex-direction: column; align-items: center; 
     width: 100%; max-width: 1200px; padding: 20px;
+    max-height: 100vh; overflow-y: auto; /* Allow scrolling if story is long */
 }
 
+/* Zoom functionality */
 .lb-content img { 
-    max-height: 75vh; max-width: 100%; 
+    max-height: 65vh; max-width: 100%; 
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-    margin-bottom: 40px;
+    margin-bottom: 10px;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.lb-content img.zoomed {
+    transform: scale(1.8);
+    cursor: zoom-out;
+    z-index: 10;
+    margin: 5vh 0; /* Add margin when zoomed to see edges */
+}
+
+.zoom-hint {
+    color: #555; font-size: 0.7rem; margin-bottom: 30px; letter-spacing: 1px;
 }
 
 .lb-info { 
     text-align: center; width: 100%; 
     animation: slideUp 0.5s ease forwards;
+    padding-bottom: 40px;
 }
 
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 #lb-title { 
-    font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 30px; 
+    font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 20px; 
     color: #fff; letter-spacing: 1px; font-weight: 400;
 }
+
+/* Story inside lightbox */
+.lb-story {
+    max-width: 700px; margin: 0 auto 30px auto;
+    color: #aaa; font-family: var(--font-serif); font-size: 1.1rem;
+    line-height: 1.6; font-style: italic;
+    position: relative;
+    padding: 0 20px;
+}
+.story-icon { color: #333; margin-right: 10px; font-size: 0.8rem; transform: translateY(-5px); }
 
 .tech-specs { 
     display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; 
@@ -307,6 +356,7 @@ nav {
 .close-lb { 
     position: absolute; top: 30px; right: 40px; 
     color: #888; font-size: 2rem; cursor: pointer; transition: 0.3s;
+    z-index: 2001;
 }
 .close-lb:hover { color: #fff; transform: rotate(90deg); }
 
@@ -329,7 +379,6 @@ nav {
     .content-container { padding: 20px 15px; }
     
     .gallery-grid { 
-        /* Ensure images are 1 per row on very small screens, 2 on larger mobile */
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); 
     }
     
@@ -340,5 +389,8 @@ nav {
     .philosophical-quote { font-size: 1.5rem; }
     
     .lb-content img { max-height: 50vh; }
+    .lb-content img.zoomed { transform: scale(1.5); }
+    
     .tech-specs { gap: 20px; flex-direction: column; }
+    .lb-story { font-size: 1rem; }
 }
