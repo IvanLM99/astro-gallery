@@ -5,80 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosmos | Iván López</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Fonts: Cormorant Garamond (Philosophical) & Montserrat (Technical) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- OPTIONAL MUSIC -->
-    <!-- Download a track, name it 'ambient.mp3', put in assets folder. Browsers require interaction to play, so this usually needs a start button, but we'll leave the tag here just in case -->
     <audio id="bg-music" loop>
-        <source src="assets/ambient.mp3" type="audio/mpeg">
+        <source src="audio/Silent Hill 2 Remake OST - Mary's Letter Theme Original Soundtrack.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 1. BLACK HOLE OPENING ANIMATION -->
     <div id="loader-overlay">
-        <div class="accretion-disk"></div>
-        <div class="event-horizon"></div>
+        <div class="supernova-core"></div>
+        <div class="flash-overlay"></div>
     </div>
 
-    <!-- 2. NAVIGATION -->
     <nav>
         <div class="nav-left">
             <span class="site-title">I. LOPEZ</span>
         </div>
         
         <div class="nav-center">
-            <button class="menu-btn active" onclick="switchTab('gallery')">GALLERY</button>
-            <button class="menu-btn" onclick="switchTab('portfolio')">JOURNEY & PORTFOLIO</button>
+            <button class="menu-btn active" id="btn-gallery" onclick="switchTab('gallery')">GALLERY</button>
+            <button class="menu-btn" id="btn-portfolio" onclick="switchTab('portfolio')">JOURNEY & PORTFOLIO</button>
         </div>
 
         <div class="nav-right">
             <div class="lang-select">
-                <span class="lang active">EN</span> / <span class="lang">ES</span>
+                <span id="lang-en" class="lang active" onclick="setLanguage('en')">EN</span> / 
+                <span id="lang-es" class="lang" onclick="setLanguage('es')">ES</span>
             </div>
         </div>
     </nav>
 
-    <!-- 3. MAIN CONTENT -->
     <main class="content-container">
 
-        <!-- =======================
-             TAB 1: GALLERY
-        ======================== -->
         <section id="gallery-tab" class="fade-in">
             
             <header class="gallery-header">
-                <h1 class="philosophical-quote">"We are made of starstuff."</h1>
+                <div class="quote-container">
+                    <h1 id="quote-text" class="philosophical-quote">"We are made of starstuff."</h1>
+                    <p id="quote-author" class="quote-author">- Carl Sagan</p>
+                </div>
                 
                 <div class="filters">
-                    <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
-                    <button class="filter-btn" onclick="filterGallery('moon', this)">Luna</button>
-                    <button class="filter-btn" onclick="filterGallery('dso', this)">Deep Sky</button>
-                    <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscapes</button>
+                    <button class="filter-btn active" data-filter="all" onclick="filterGallery('all', this)">All</button>
+                    <button class="filter-btn" data-filter="moon" onclick="filterGallery('moon', this)">Luna</button>
+                    <button class="filter-btn" data-filter="dso" onclick="filterGallery('dso', this)">Deep Sky</button>
+                    <button class="filter-btn" data-filter="landscape" onclick="filterGallery('landscape', this)">Landscapes</button>
                 </div>
             </header>
 
-            <!-- YEAR 2025 -->
-            <div class="year-section">
+            <div class="year-section" id="year-2025">
                 <h2 class="year-title">2025</h2>
                 <div class="gallery-grid">
                     
-                    <!-- Item 1 -->
                     <div class="g-item moon" onclick="openLightbox(this)" 
                         data-title="The Silent Witness" 
                         data-date="Aug 12, 2025" 
                         data-obj="Waxing Gibbous" 
                         data-exp="1/500s" 
                         data-equip="Seestar S50">
-                        <!-- Replace src with your local image e.g., assets/moon2025.jpg -->
                         <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=800" alt="Moon">
-                        <div class="overlay"><span>DETAILS</span></div>
+                        <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
 
-                     <!-- Item 2 -->
                      <div class="g-item dso" onclick="openLightbox(this)" 
                         data-title="Stellar Nursery" 
                         data-date="May 04, 2025" 
@@ -86,18 +76,16 @@
                         data-exp="1h Integration" 
                         data-equip="Seestar S50">
                         <img src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=800" alt="Nebula">
-                        <div class="overlay"><span>DETAILS</span></div>
+                        <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- YEAR 2024 -->
-            <div class="year-section">
+            <div class="year-section" id="year-2024">
                 <h2 class="year-title">2024</h2>
                 <div class="gallery-grid">
                     
-                    <!-- Item 3 -->
                     <div class="g-item landscape" onclick="openLightbox(this)" 
                         data-title="Desert Solitude" 
                         data-date="July 2024" 
@@ -105,10 +93,9 @@
                         data-exp="20s ISO3200" 
                         data-equip="Olympus E420">
                         <img src="https://images.unsplash.com/photo-1504333638930-c8787321eee0?auto=format&fit=crop&w=800" alt="Milky Way">
-                        <div class="overlay"><span>DETAILS</span></div>
+                        <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
 
-                    <!-- Item 4 -->
                     <div class="g-item dso" onclick="openLightbox(this)" 
                         data-title="Ancient Light" 
                         data-date="Nov 2024" 
@@ -116,96 +103,84 @@
                         data-exp="40m Stack" 
                         data-equip="Seestar S50">
                         <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800" alt="Andromeda">
-                        <div class="overlay"><span>DETAILS</span></div>
+                        <div class="overlay"><span data-t="details">DETAILS</span></div>
                     </div>
 
                 </div>
             </div>
-            <!-- Add more years here just by copying the .year-section block -->
 
         </section>
 
 
-        <!-- =======================
-             TAB 2: PORTFOLIO & STORY
-        ======================== -->
         <section id="portfolio-tab" class="hidden">
             
-            <!-- A. THE STORY (ZIG ZAG LAYOUT) -->
             <div class="story-container">
                 
-                <!-- ROW 1: Image Left, Text Right -->
                 <div class="story-row">
                     <div class="story-img">
                         <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=800" alt="Night Sky">
                     </div>
                     <div class="story-text">
-                        <h3>The First Glimpse</h3>
-                        <p>It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.</p>
+                        <h3 data-t="story1_title">The First Glimpse</h3>
+                        <p data-t="story1_text">It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.</p>
                     </div>
                 </div>
 
-                <!-- ROW 2: Text Left, Image Right -->
                 <div class="story-row reverse">
                     <div class="story-text">
-                        <h3>The Technical Pursuit</h3>
-                        <p>Astrophotography is where art meets rigorous science. It taught me patience—collecting light for hours to reveal what the human eye cannot see. Just like in Data Science, it is about extracting signal from noise, finding patterns in the chaos of the cosmos using tools like PixInsight and Python.</p>
+                        <h3 data-t="story2_title">The Technical Pursuit</h3>
+                        <p data-t="story2_text">Astrophotography is where art meets rigorous science. It taught me patience—collecting light for hours to reveal what the human eye cannot see. Just like in Data Science, it is about extracting signal from noise, finding patterns in the chaos of the cosmos using tools like PixInsight and Python.</p>
                     </div>
                     <div class="story-img">
                         <img src="https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=800" alt="Telescope">
                     </div>
                 </div>
 
-                <!-- ROW 3: Image Left, Text Right -->
                 <div class="story-row">
                     <div class="story-img">
                         <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800" alt="Universe">
                     </div>
                     <div class="story-text">
-                        <h3>The Philosophy of Light</h3>
-                        <p>We are merely temporary observers of an eternal universe. Through my lens, I attempt to capture these fleeting moments of eternity. Whether it is the craters of the Moon or the dust lanes of Andromeda, each image is a humbled acknowledgement of our place in the void.</p>
+                        <h3 data-t="story3_title">The Philosophy of Light</h3>
+                        <p data-t="story3_text">We are merely temporary observers of an eternal universe. Through my lens, I attempt to capture these fleeting moments of eternity. Whether it is the craters of the Moon or the dust lanes of Andromeda, each image is a humbled acknowledgement of our place in the void.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Parallax Divider -->
             <div class="parallax-divider"></div>
 
-            <!-- B. ANONYMOUS PROFESSIONAL PROFILE -->
             <div class="cv-wrapper">
-                <h2 class="cv-main-title">Professional Profile</h2>
+                <h2 class="cv-main-title" data-t="profile_title">Professional Profile</h2>
                 
                 <div class="cv-grid">
                     
-                    <!-- Column 1: Experience -->
                     <div class="cv-col">
-                        <h4 class="cv-section-head">Experience</h4>
+                        <h4 class="cv-section-head" data-t="exp_title">Experience</h4>
                         
                         <div class="cv-item">
-                            <span class="cv-role">AI Engineer & Architect</span>
-                            <span class="cv-place">Multinational Hospitality Group</span>
-                            <span class="cv-date">May 2025 - Present</span>
-                            <p>Leading AI adoption strategies, defining corporate governance for Generative AI, and deploying LLM solutions (Gemini) across global departments to automate complex workflows.</p>
+                            <span class="cv-role" data-t="job1_role">AI Engineer & Architect</span>
+                            <span class="cv-place" data-t="job1_place">Multinational Hospitality Group</span>
+                            <span class="cv-date" data-t="job1_date">May 2025 - Present</span>
+                            <p data-t="job1_desc">Leading AI adoption strategies, defining corporate governance for Generative AI, and deploying LLM solutions (Gemini) across global departments to automate complex workflows.</p>
                         </div>
 
                         <div class="cv-item">
-                            <span class="cv-role">Data Scientist</span>
-                            <span class="cv-place">Engineering & Innovation Firm</span>
-                            <span class="cv-date">Apr 2024 - Oct 2024</span>
-                            <p>Developed Computer Vision models (YOLO, Detectron) to digitize road infrastructure assets from terabytes of visual data. Built deep learning pipelines for object detection.</p>
+                            <span class="cv-role" data-t="job2_role">Data Scientist</span>
+                            <span class="cv-place" data-t="job2_place">Engineering & Innovation Firm</span>
+                            <span class="cv-date" data-t="job2_date">Apr 2024 - Oct 2024</span>
+                            <p data-t="job2_desc">Developed Computer Vision models (YOLO, Detectron) to digitize road infrastructure assets from terabytes of visual data. Built deep learning pipelines for object detection.</p>
                         </div>
 
                         <div class="cv-item">
-                            <span class="cv-role">Data Analyst</span>
-                            <span class="cv-place">Public Utility Services</span>
-                            <span class="cv-date">Oct 2022 - May 2023</span>
-                            <p>Optimized fleet efficiency and environmental reporting using BI tools and statistical analysis for large-scale urban infrastructure.</p>
+                            <span class="cv-role" data-t="job3_role">Data Analyst</span>
+                            <span class="cv-place" data-t="job3_place">Public Utility Services</span>
+                            <span class="cv-date" data-t="job3_date">Oct 2022 - May 2023</span>
+                            <p data-t="job3_desc">Optimized fleet efficiency and environmental reporting using BI tools and statistical analysis for large-scale urban infrastructure.</p>
                         </div>
                     </div>
 
-                    <!-- Column 2: Skills & Edu -->
                     <div class="cv-col">
-                        <h4 class="cv-section-head">Core Competencies</h4>
+                        <h4 class="cv-section-head" data-t="skills_title">Core Competencies</h4>
                         <ul class="skills-list">
                             <li>Deep Learning (PyTorch, TensorFlow)</li>
                             <li>Generative AI & LLMs</li>
@@ -215,23 +190,22 @@
                             <li>Big Data Platforms (Hadoop, Spark)</li>
                         </ul>
 
-                        <h4 class="cv-section-head mt-large">Education</h4>
+                        <h4 class="cv-section-head mt-large" data-t="edu_title">Education</h4>
                         <div class="cv-item">
-                            <span class="cv-role">Master in Artificial Intelligence</span>
-                            <span class="cv-place">University of the Balearic Islands</span>
+                            <span class="cv-role" data-t="edu1_role">Master in Artificial Intelligence</span>
+                            <span class="cv-place" data-t="edu1_place">University of the Balearic Islands</span>
                             <span class="cv-date">2023 - 2024</span>
                         </div>
                         <div class="cv-item">
-                            <span class="cv-role">B.S. Industrial Electronics Engineering</span>
-                            <span class="cv-place">University of the Balearic Islands</span>
+                            <span class="cv-role" data-t="edu2_role">B.S. Industrial Electronics Engineering</span>
+                            <span class="cv-place" data-t="edu2_place">University of the Balearic Islands</span>
                             <span class="cv-date">2017 - 2023</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer / Contact -->
                 <div class="contact-footer">
-                    <p class="contact-quote">"Somewhere, something incredible is waiting to be known."</p>
+                    <p class="contact-quote" data-t="contact_quote">"Somewhere, something incredible is waiting to be known."</p>
                     <div class="contact-icons">
                         <a href="mailto:ivan1999spain@gmail.com"><i class="fas fa-envelope"></i></a>
                         <a href="https://linkedin.com/in/lmivan" target="_blank"><i class="fab fa-linkedin"></i></a>
@@ -244,7 +218,6 @@
 
     </main>
 
-    <!-- LIGHTBOX OVERLAY -->
     <div id="lightbox">
         <span class="close-lb" onclick="closeLightbox()">&times;</span>
         <div class="lb-content">
@@ -252,10 +225,22 @@
             <div class="lb-info">
                 <h2 id="lb-title">Object Name</h2>
                 <div class="tech-specs">
-                    <div class="spec"><span>OBJECT</span><span id="val-obj">--</span></div>
-                    <div class="spec"><span>DATE</span><span id="val-date">--</span></div>
-                    <div class="spec"><span>EXPOSURE</span><span id="val-exp">--</span></div>
-                    <div class="spec"><span>EQUIPMENT</span><span id="val-equip">--</span></div>
+                    <div class="spec">
+                        <span data-t="lb_obj">OBJECT</span>
+                        <span id="val-obj">--</span>
+                    </div>
+                    <div class="spec">
+                        <span data-t="lb_date">DATE</span>
+                        <span id="val-date">--</span>
+                    </div>
+                    <div class="spec">
+                        <span data-t="lb_exp">EXPOSURE</span>
+                        <span id="val-exp">--</span>
+                    </div>
+                    <div class="spec">
+                        <span data-t="lb_equip">EQUIPMENT</span>
+                        <span id="val-equip">--</span>
+                    </div>
                 </div>
             </div>
         </div>
