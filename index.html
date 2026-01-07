@@ -10,17 +10,12 @@
 </head>
 <body>
 
-    <!-- AUDIO: Rename your file to bg.mp3 for best results -->
-    <!-- If you keep the long name, ensure it matches exactly in the folder -->
-    <audio id="bg-music" loop>
-        <source src="audio/Silent%20Hill%202%20Remake%20OST%20-%20Mary's%20Letter%20Theme%20Original%20Soundtrack.mp3" type="audio/mpeg">
-        <!-- Fallback if you renamed it -->
-        <source src="audio/bg.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- 1. BLACK HOLE LOADER (No Flash) -->
+    <!-- 1. BLACK HOLE & SUPERNOVA LOADER -->
     <div id="loader-overlay">
-        <div class="accretion-disk"></div>
+        <div class="loader-container">
+            <div class="accretion-disk"></div>
+            <div class="supernova-burst"></div>
+        </div>
     </div>
 
     <!-- 2. NAVIGATION -->
@@ -55,66 +50,17 @@
                 </div>
                 
                 <div class="filters">
-                    <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
-                    <button class="filter-btn" onclick="filterGallery('moon', this)">Luna</button>
-                    <button class="filter-btn" onclick="filterGallery('dso', this)">Deep Sky</button>
-                    <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscapes</button>
+                    <button class="filter-btn active" data-filter="all" data-t="filter_all" onclick="filterGallery('all', this)">All</button>
+                    <button class="filter-btn" data-filter="moon" data-t="filter_moon" onclick="filterGallery('moon', this)">Moon</button>
+                    <button class="filter-btn" data-filter="dso" data-t="filter_dso" onclick="filterGallery('dso', this)">Deep Sky</button>
+                    <button class="filter-btn" data-filter="landscape" data-t="filter_landscape" onclick="filterGallery('landscape', this)">Landscapes</button>
+                    <button class="filter-btn" data-filter="sky" data-t="filter_sky" onclick="filterGallery('sky', this)">Sky</button>
+                    <button class="filter-btn" data-filter="solar" data-t="filter_solar" onclick="filterGallery('solar', this)">Solar</button>
                 </div>
             </header>
 
-            <!-- 2025 SECTION -->
-            <div class="year-section" id="year-2025">
-                <h2 class="year-title">2025</h2>
-                <div class="gallery-grid">
-                    <!-- Image 1 -->
-                    <div class="g-item moon" onclick="openLightbox(this)" 
-                        data-title="The Silent Witness" 
-                        data-date="Aug 12, 2025" 
-                        data-obj="Waxing Gibbous" 
-                        data-exp="1/500s" 
-                        data-equip="Seestar S50">
-                        <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?auto=format&fit=crop&w=800" alt="Moon">
-                        <div class="overlay"><span data-t="details">DETAILS</span></div>
-                    </div>
-                     <!-- Image 2 -->
-                     <div class="g-item dso" onclick="openLightbox(this)" 
-                        data-title="Stellar Nursery" 
-                        data-date="May 04, 2025" 
-                        data-obj="Rosette Nebula" 
-                        data-exp="1h Integration" 
-                        data-equip="Seestar S50">
-                        <img src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=800" alt="Nebula">
-                        <div class="overlay"><span data-t="details">DETAILS</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2024 SECTION -->
-            <div class="year-section" id="year-2024">
-                <h2 class="year-title">2024</h2>
-                <div class="gallery-grid">
-                    <!-- Image 3 -->
-                    <div class="g-item landscape" onclick="openLightbox(this)" 
-                        data-title="Desert Solitude" 
-                        data-date="July 2024" 
-                        data-obj="Milky Way Core" 
-                        data-exp="20s ISO3200" 
-                        data-equip="Olympus E420">
-                        <img src="https://images.unsplash.com/photo-1504333638930-c8787321eee0?auto=format&fit=crop&w=800" alt="Milky Way">
-                        <div class="overlay"><span data-t="details">DETAILS</span></div>
-                    </div>
-                    <!-- Image 4 -->
-                    <div class="g-item dso" onclick="openLightbox(this)" 
-                        data-title="Ancient Light" 
-                        data-date="Nov 2024" 
-                        data-obj="Andromeda (M31)" 
-                        data-exp="40m Stack" 
-                        data-equip="Seestar S50">
-                        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800" alt="Andromeda">
-                        <div class="overlay"><span data-t="details">DETAILS</span></div>
-                    </div>
-                </div>
-            </div>
+            <!-- Dynamic Gallery Container (Populated by JS) -->
+            <div id="dynamic-gallery-root"></div>
 
         </section>
 
@@ -224,9 +170,19 @@
     <div id="lightbox">
         <span class="close-lb" onclick="closeLightbox()">&times;</span>
         <div class="lb-content">
-            <img id="lb-img" src="" alt="Expanded View">
+            <!-- Added onclick for zoom -->
+            <img id="lb-img" src="" alt="Expanded View" onclick="toggleZoom(this)">
+            <p class="zoom-hint" data-t="zoom_hint">Click image to zoom</p>
+            
             <div class="lb-info">
                 <h2 id="lb-title">Object Name</h2>
+                
+                <!-- Story Section (Hidden if empty) -->
+                <div id="lb-story-container" class="lb-story">
+                    <i class="fas fa-quote-left story-icon"></i>
+                    <p id="lb-story-text"></p>
+                </div>
+
                 <div class="tech-specs">
                     <div class="spec">
                         <span data-t="lb_obj">OBJECT</span>
