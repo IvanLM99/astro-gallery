@@ -3,108 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroTerminal</title>
+    <title>Cosmos | Iván López</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Font for Console Look -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Background Stars -->
-    <div id="stars"></div>
-    <div id="stars2"></div>
-    <div id="stars3"></div>
+    <!-- 1. BLACK HOLE & SUPERNOVA LOADER -->
+    <div id="loader-overlay">
+        <div class="accretion-disk"></div>
+    </div>
 
-    <div class="container">
-        <!-- Header / Console Area -->
-        <header>
-            <div class="console-line">
-                <span class="prompt">user@universe:~$</span>
-                <span id="typewriter"></span><span class="cursor">|</span>
+    <!-- 2. NAVIGATION -->
+    <nav id="navbar">
+        <div class="nav-left">
+            <span class="site-title">I. LOPEZ</span>
+        </div>
+        
+        <div class="nav-center">
+            <button class="menu-btn active" id="btn-gallery" onclick="switchTab('gallery')">GALLERY</button>
+            <button class="menu-btn" id="btn-universe" onclick="switchTab('portfolio')">MY UNIVERSE</button>
+        </div>
+
+        <div class="nav-right">
+            <div class="lang-select">
+                <span id="lang-en" class="lang active" onclick="setLanguage('en')">EN</span> / 
+                <span id="lang-es" class="lang" onclick="setLanguage('es')">ES</span>
             </div>
-            <nav>
-                <a href="#gallery">[ GALLERY ]</a>
-                <a href="#cv">[ CV_PORTFOLIO ]</a>
-                <a href="#contact">[ CONTACT ]</a>
-            </nav>
-        </header>
+        </div>
+    </nav>
 
-        <!-- Gallery Section -->
-        <section id="gallery">
-            <h2>> ./load_images.sh</h2>
+    <!-- 3. SCROLL TO TOP ARROW -->
+    <button id="scroll-top-btn" onclick="scrollToTop()">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- 4. MAIN CONTENT -->
+    <main class="content-container">
+
+        <!-- GALLERY TAB -->
+        <section id="gallery-tab" class="fade-in">
             
-            <!-- Filters -->
-            <div class="filter-buttons">
-                <button class="btn active" onclick="filterImages('all')">ALL</button>
-                <button class="btn" onclick="filterImages('moon')">MOON</button>
-                <button class="btn" onclick="filterImages('dso')">DEEP_SKY</button>
-                <button class="btn" onclick="filterImages('landscape')">LANDSCAPES</button>
-                <button class="btn" onclick="filterImages('planetary')">PLANETARY</button>
-            </div>
+            <header class="gallery-header">
+                <div class="quote-container">
+                    <h1 id="quote-text" class="philosophical-quote">"We are made of starstuff."</h1>
+                    <p id="quote-author" class="quote-author">- Carl Sagan</p>
+                </div>
+                
+                <!-- Scrollable Filters Container -->
+                <div class="filters-wrapper">
+                    <div class="filters">
+                        <button class="filter-btn active" data-filter="all" data-t="filter_all" onclick="filterGallery('all', this)">All</button>
+                        <button class="filter-btn" data-filter="moon" data-t="filter_moon" onclick="filterGallery('moon', this)">Moon</button>
+                        <button class="filter-btn" data-filter="dso" data-t="filter_dso" onclick="filterGallery('dso', this)">Deep Sky</button>
+                        <button class="filter-btn" data-filter="landscape" data-t="filter_landscape" onclick="filterGallery('landscape', this)">Landscapes</button>
+                        <button class="filter-btn" data-filter="planets" data-t="filter_planets" onclick="filterGallery('planets', this)">Planets</button>
+                        <button class="filter-btn" data-filter="nebulae" data-t="filter_nebulae" onclick="filterGallery('nebulae', this)">Nebulae</button>
+                        <button class="filter-btn" data-filter="galaxies" data-t="filter_galaxies" onclick="filterGallery('galaxies', this)">Galaxies</button>
+                        <button class="filter-btn" data-filter="starclusters" data-t="filter_clusters" onclick="filterGallery('starclusters', this)">Clusters</button>
+                    </div>
+                </div>
+            </header>
 
-            <!-- Image Grid -->
-            <div class="gallery-grid">
-                <!-- Example Image 1 -->
-                <div class="gallery-item moon">
-                    <img src="https://via.placeholder.com/400x400/000000/FFFFFF?text=Moon+Phase" alt="Moon">
-                    <div class="overlay">
-                        <div class="text">OBJECT: MOON<br>ISO: 100<br>EXP: 1/200s</div>
-                    </div>
-                </div>
+            <!-- Dynamic Gallery Container -->
+            <div id="dynamic-gallery-root"></div>
 
-                <!-- Example Image 2 -->
-                <div class="gallery-item dso">
-                    <img src="https://via.placeholder.com/400x400/111111/FFFFFF?text=Orion+Nebula" alt="Orion">
-                    <div class="overlay">
-                        <div class="text">OBJECT: M42<br>INT: 2 HRS<br>FILTER: Ha</div>
-                    </div>
-                </div>
-
-                <!-- Example Image 3 -->
-                <div class="gallery-item landscape">
-                    <img src="https://via.placeholder.com/400x400/222222/FFFFFF?text=Milky+Way" alt="Milky Way">
-                    <div class="overlay">
-                        <div class="text">LOC: DESERT<br>LENS: 14MM<br>STACKED</div>
-                    </div>
-                </div>
-                 <!-- Example Image 4 -->
-                 <div class="gallery-item planetary">
-                    <img src="https://via.placeholder.com/400x400/000000/FFFFFF?text=Jupiter" alt="Jupiter">
-                    <div class="overlay">
-                        <div class="text">OBJECT: JUPITER<br>FPS: 120<br>C11 EDGE HD</div>
-                    </div>
-                </div>
-            </div>
         </section>
 
-        <!-- CV Section -->
-        <section id="cv">
-            <h2>> cat cv.txt</h2>
-            <div class="cv-content">
-                <p><span class="keyword">NAME:</span> John Doe</p>
-                <p><span class="keyword">ROLE:</span> Astrophotographer & Developer</p>
-                <p><span class="keyword">EXP:</span> 5+ Years in Imaging</p>
-                <br>
-                <p>--- SKILLS ---</p>
-                <ul>
-                    <li>> PixInsight / Photoshop</li>
-                    <li>> Python / Data Analysis</li>
-                    <li>> Hardware Integration</li>
-                </ul>
+        <!-- PORTFOLIO TAB -->
+        <section id="portfolio-tab" class="hidden">
+            
+            <div class="story-container">
+                <div class="story-row">
+                    <div class="story-img">
+                        <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=800" alt="Night Sky">
+                    </div>
+                    <div class="story-text">
+                        <h3 data-t="story1_title">The First Glimpse</h3>
+                        <p data-t="story1_text">It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.</p>
+                    </div>
+                </div>
+
+                <div class="story-row reverse">
+                    <div class="story-text">
+                        <h3 data-t="story2_title">The Technical Pursuit</h3>
+                        <p data-t="story2_text">Astrophotography is where art meets rigorous science. It taught me patience—collecting light for hours to reveal what the human eye cannot see. Just like in Data Science, it is about extracting signal from noise, finding patterns in the chaos of the cosmos using tools like PixInsight and Python.</p>
+                    </div>
+                    <div class="story-img">
+                        <img src="https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=800" alt="Telescope">
+                    </div>
+                </div>
+
+                <div class="story-row">
+                    <div class="story-img">
+                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800" alt="Universe">
+                    </div>
+                    <div class="story-text">
+                        <h3 data-t="story3_title">The Philosophy of Light</h3>
+                        <p data-t="story3_text">We are merely temporary observers of an eternal universe. Through my lens, I attempt to capture these fleeting moments of eternity. Whether it is the craters of the Moon or the dust lanes of Andromeda, each image is a humbled acknowledgement of our place in the void.</p>
+                    </div>
+                </div>
             </div>
-        </section>
 
-        <!-- Contact Section -->
-        <section id="contact">
-            <h2>> ./send_transmission.exe</h2>
-            <p>Connect via subspace frequencies:</p>
-            <p><a href="mailto:email@example.com">email@example.com</a></p>
-            <p><a href="#">instagram/astrouser</a></p>
-        </section>
+            <div class="parallax-divider"></div>
 
-        <footer>
-            <p>SYSTEM STATUS: ONLINE. &copy; 2024</p>
+            <div class="cv-wrapper">
+                <h2 class="cv-main-title" data-t="profile_title">Professional Profile</h2>
+                
+                <div class="cv-grid">
+                    <div class="cv-col">
+                        <h4 class="cv-section-head" data-t="exp_title">Experience</h4>
+                        <div class="cv-item">
+                            <span class="cv-role" data-t="job1_role">AI Engineer & Architect</span>
+                            <span class="cv-place" data-t="job1_place">Multinational Hospitality Group</span>
+                            <span class="cv-date" data-t="job1_date">May 2025 - Present</span>
+                            <p data-t="job1_desc">Leading AI adoption strategies, defining corporate governance for Generative AI, and deploying LLM solutions (Gemini) across global departments to automate complex workflows.</p>
+                        </div>
+                        <div class="cv-item">
+                            <span class="cv-role" data-t="job2_role">Data Scientist</span>
+                            <span class="cv-place" data-t="job2_place">Engineering & Innovation Firm</span>
+                            <span class="cv-date" data-t="job2_date">Apr 2024 - Oct 2024</span>
+                            <p data-t="job2_desc">Developed Computer Vision models (YOLO, Detectron) to digitize road infrastructure assets from terabytes of visual data. Built deep learning pipelines for object detection.</p>
+                        </div>
+                        <div class="cv-item">
+                            <span class="cv-role" data-t="job3_role">Data Analyst</span>
+                            <span class="cv-place" data-t="job3_place">Public Utility Services</span>
+                            <span class="cv-date" data-t="job3_date">Oct 2022 - May 2023</span>
+                            <p data-t="job3_desc">Optimized fleet efficiency and environmental reporting using BI tools and statistical analysis for large-scale urban infrastructure.</p>
+                        </div>
+                    </div>
+
+                    <div class="cv-col">
+                        <h4 class="cv-section-head" data-t="skills_title">Core Competencies</h4>
+                        <ul class="skills-list">
+                            <li>Deep Learning (PyTorch, TensorFlow)</li>
+                            <li>Generative AI & LLMs</li>
+                            <li>Computer Vision & Image Processing</li>
+                            <li>Cloud Architecture (GCP, AWS)</li>
+                            <li>Python, SQL, Docker</li>
+                            <li>Big Data Platforms (Hadoop, Spark)</li>
+                        </ul>
+
+                        <h4 class="cv-section-head mt-large" data-t="edu_title">Education</h4>
+                        <div class="cv-item">
+                            <span class="cv-role" data-t="edu1_role">Master in Artificial Intelligence</span>
+                            <span class="cv-place" data-t="edu1_place">University of the Balearic Islands</span>
+                            <span class="cv-date">2023 - 2024</span>
+                        </div>
+                        <div class="cv-item">
+                            <span class="cv-role" data-t="edu2_role">B.S. Industrial Electronics Engineering</span>
+                            <span class="cv-place" data-t="edu2_place">University of the Balearic Islands</span>
+                            <span class="cv-date">2017 - 2023</span>
+                        </div>
+                    </div>
+                </div>
+        </section>
+        
+        <!-- GLOBAL CONTACT FOOTER (Visible on both tabs) -->
+        <footer class="contact-footer">
+            <p class="contact-quote" data-t="contact_quote">"Somewhere, something incredible is waiting to be known."</p>
+            <div class="contact-icons">
+                <a href="mailto:ivan1999spain@gmail.com"><i class="fas fa-envelope"></i></a>
+                <a href="https://linkedin.com/in/lmivan" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/IvanLM99" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+            <p class="copyright">© 2026 Iván López</p>
         </footer>
+
+    </main>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox">
+        <span class="close-lb" onclick="closeLightbox()">&times;</span>
+        <div class="lb-content">
+            <!-- Zoom removed -->
+            <img id="lb-img" src="" alt="Expanded View">
+            
+            <div class="lb-info">
+                <h2 id="lb-title">Object Name</h2>
+                
+                <div id="lb-story-container" class="lb-story">
+                    <i class="fas fa-quote-left story-icon"></i>
+                    <p id="lb-story-text"></p>
+                </div>
+
+                <div class="tech-specs">
+                    <div class="spec">
+                        <span data-t="lb_obj">OBJECT</span>
+                        <span id="val-obj">--</span>
+                    </div>
+                    <div class="spec">
+                        <span data-t="lb_date">DATE</span>
+                        <span id="val-date">--</span>
+                    </div>
+                    <div class="spec">
+                        <span data-t="lb_exp">EXPOSURE</span>
+                        <span id="val-exp">--</span>
+                    </div>
+                    <div class="spec">
+                        <span data-t="lb_equip">EQUIPMENT</span>
+                        <span id="val-equip">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
