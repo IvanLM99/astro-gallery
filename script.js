@@ -2,7 +2,7 @@
 const translations = {
     "en": {
         "nav_gallery": "GALLERY",
-        "nav_portfolio": "JOURNEY & PORTFOLIO",
+        "nav_portfolio": "MY UNIVERSE",
         "details": "DETAILS",
         "story1_title": "The First Glimpse",
         "story1_text": "It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.",
@@ -37,15 +37,20 @@ const translations = {
         "lb_equip": "EQUIPMENT",
         "zoom_hint": "Click image to zoom",
         "filter_all": "All",
-        "filter_moon": "Moon",
-        "filter_dso": "Deep Sky",
-        "filter_landscape": "Landscapes",
-        "filter_sky": "Sky",
-        "filter_solar": "Solar"
+        // Dynamic filters default labels (capitalize first letter)
+        "cat_moon": "Moon",
+        "cat_dso": "Deep Sky",
+        "cat_landscape": "Landscape",
+        "cat_planets": "Planets",
+        "cat_nebulae": "Nebulae",
+        "cat_galaxies": "Galaxies",
+        "cat_starclusters": "Star Clusters",
+        "cat_solar": "Solar",
+        "cat_sky": "Sky"
     },
     "es": {
         "nav_gallery": "GALERÍA",
-        "nav_portfolio": "VIAJE Y PORTFOLIO",
+        "nav_portfolio": "MI UNIVERSO",
         "details": "DETALLES",
         "story1_title": "El Primer Vistazo",
         "story1_text": "No se trataba solo de mirar hacia arriba; se trataba de entender la escala de todo. El silencio del cielo nocturno en Mallorca ofrecía una perspectiva que el ruido del día nunca podría proporcionar. Me di cuenta de que cada fotón que golpeaba mi sensor había viajado miles de años solo para terminar su viaje aquí.",
@@ -80,11 +85,15 @@ const translations = {
         "lb_equip": "EQUIPO",
         "zoom_hint": "Haz clic para hacer zoom",
         "filter_all": "Todo",
-        "filter_moon": "Luna",
-        "filter_dso": "Cielo Profundo",
-        "filter_landscape": "Paisajes",
-        "filter_sky": "Cielo",
-        "filter_solar": "Solar"
+        "cat_moon": "Luna",
+        "cat_dso": "Cielo Profundo",
+        "cat_landscape": "Paisajes",
+        "cat_planets": "Planetas",
+        "cat_nebulae": "Nebulosas",
+        "cat_galaxies": "Galaxias",
+        "cat_starclusters": "Cúmulos",
+        "cat_solar": "Sol",
+        "cat_sky": "Cielo"
     }
 };
 
@@ -97,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             galleryData = data;
+            renderFilters(data); // New Function to generate buttons
             renderGallery(data);
         })
         .catch(err => console.error('Error loading gallery data:', err));
@@ -114,6 +124,9 @@ function setLanguage(lang) {
         const key = el.getAttribute('data-t');
         if (translations[lang] && translations[lang][key]) {
             el.textContent = translations[lang][key];
+        } else if (key.startsWith('cat_')) {
+            // Fallback for dynamic category translations if not found
+            el.textContent = key.replace('cat_', '').charAt(0).toUpperCase() + key.replace('cat_', '').slice(1);
         }
     });
 
@@ -185,6 +198,27 @@ setTimeout(function() {
     if(quoteAuthEl) quoteAuthEl.classList.add('visible');
     setInterval(cycleQuotes, 8000); 
 }, 3000);
+
+/* === DYNAMIC FILTERS === */
+function renderFilters(data) {
+    const filtersContainer = document.querySelector('.filters');
+    if (!filtersContainer) return;
+
+    // Get unique categories from JSON
+    const categories = new Set(data.map(item => item.category).filter(c => c));
+    const sortedCats = Array.from(categories).sort();
+
+    // Start with "All" button
+    let html = `<button class="filter-btn active" data-filter="all" data-t="filter_all" onclick="filterGallery('all', this)">All</button>`;
+
+    sortedCats.forEach(cat => {
+        // Create translation key 'cat_moon', 'cat_dso', etc.
+        const tKey = `cat_${cat.toLowerCase()}`;
+        html += `<button class="filter-btn" data-filter="${cat}" data-t="${tKey}" onclick="filterGallery('${cat}', this)">${cat}</button>`;
+    });
+
+    filtersContainer.innerHTML = html;
+}
 
 /* === DYNAMIC GALLERY RENDER === */
 function renderGallery(data) {
