@@ -3,7 +3,7 @@ import json
 import re
 
 # === CONFIGURATION ===
-GALLERY_DIR = 'assets/gallery'
+GALLERY_DIR = 'assets/'
 JSON_FILE = 'gallery_data.json'
 ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
 
