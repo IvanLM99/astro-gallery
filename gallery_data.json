@@ -112,20 +112,6 @@
         "equipment": "Seestar S50"
     },
     {
-        "id": "EclipseUs",
-        "year": "2025",
-        "category": "dso",
-        "src": "assets/EclipseUs.jpg",
-        "title_en": "Eclipseus",
-        "title_es": "",
-        "story_en": "",
-        "story_es": "",
-        "date": "",
-        "object": "",
-        "exposure": "--",
-        "equipment": "Seestar S50"
-    },
-    {
         "id": "7047923838604e1481c734a2e8a59a67",
         "year": "2025",
         "category": "dso",
