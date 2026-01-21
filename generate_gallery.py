@@ -77,6 +77,8 @@ def main():
                     new_entry = {
                         "id": img_id,
                         "year": year,
+                        "month": month,
+                        "day": day,
                         "category": get_category_from_filename(file),
                         "src": rel_path,
                         "title_en": file.replace('-', ' ').replace('_', ' ').split('.')[0].title(),
@@ -85,8 +87,8 @@ def main():
                         "story_es": "",
                         "date": "",
                         "object": "",
-                        "exposure": "--",
-                        "equipment": "Seestar S50"
+                        "exposure": "",
+                        "equipment": ""
                     }
                     new_gallery_list.append(new_entry)
 
