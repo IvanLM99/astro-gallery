@@ -37,7 +37,7 @@ const translations = {
         "lb_equip": "EQUIPMENT",
         "zoom_hint": "Click image to zoom",
         "filter_all": "All",
-        // Dynamic filters default labels (capitalize first letter)
+        // Dynamic filters default labels
         "cat_moon": "Moon",
         "cat_dso": "Deep Sky",
         "cat_landscape": "Landscape",
@@ -97,35 +97,57 @@ const translations = {
     }
 };
 
-let currentLang = 'en';
+let currentLang = 'es'; // Main language changed to Spanish
 let galleryData = [];
+let visibleItems = []; // To track filtered list for Next/Prev
+let currentImageIndex = 0; // Index for Next/Prev
 
 /* === INIT & FETCH DATA === */
 document.addEventListener('DOMContentLoaded', () => {
     fetch('gallery_data.json')
         .then(response => response.json())
         .then(data => {
-            galleryData = data;
-            renderFilters(data); // New Function to generate buttons
-            renderGallery(data);
+            // Sort data descending by date
+            galleryData = sortDataByDate(data);
+            
+            // Initialize filters and gallery
+            renderFilters(galleryData); 
+            renderGallery(galleryData);
+            
+            // Initialize visible items as all items sorted
+            visibleItems = [...galleryData];
+            
+            // Trigger translation update for dynamic content
+            setLanguage(currentLang);
         })
         .catch(err => console.error('Error loading gallery data:', err));
     
-    // Shuffle quotes initially
     shuffleQuotes();
+    initParticles(); // Start background effect
 });
+
+/* === DATE SORTING === */
+function sortDataByDate(data) {
+    return data.sort((a, b) => {
+        // Create Date objects from dd-mm-yyyy or similar
+        // Assumes format "DD-MM-YYYY" or uses year/month/day fields
+        const d1 = new Date(a.year, a.month - 1, a.day);
+        const d2 = new Date(b.year, b.month - 1, b.day);
+        return d2 - d1; // Descending (Newest first)
+    });
+}
 
 /* === LANGUAGE HANDLING === */
 function setLanguage(lang) {
     currentLang = lang;
     
+    // Update Static Elements
     const elements = document.querySelectorAll('[data-t]');
     elements.forEach(function(el) {
         const key = el.getAttribute('data-t');
         if (translations[lang] && translations[lang][key]) {
             el.textContent = translations[lang][key];
         } else if (key.startsWith('cat_')) {
-            // Fallback for dynamic category translations if not found
             el.textContent = key.replace('cat_', '').charAt(0).toUpperCase() + key.replace('cat_', '').slice(1);
         }
     });
@@ -135,13 +157,118 @@ function setLanguage(lang) {
     if(btnGal) btnGal.textContent = translations[lang].nav_gallery;
     if(btnUni) btnUni.textContent = translations[lang].nav_portfolio;
 
+    // Toggle active class on lang switch
     document.getElementById('lang-en').classList.toggle('active', lang === 'en');
     document.getElementById('lang-es').classList.toggle('active', lang === 'es');
 
     updateQuoteDisplay();
+    
+    // Update currently open lightbox if active
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox.classList.contains('active')) {
+        updateLightboxContent(visibleItems[currentImageIndex]);
+    }
 }
 
-/* === EXPANDED QUOTES (BILIGUAL) === */
+/* === PARTICLES BACKGROUND (New Feature) === */
+function initParticles() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width, height;
+    let particles = [];
+    const particleCount = 60; // Small dots
+    let mouse = { x: null, y: null };
+    let mouseActive = false;
+
+    // Resize
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Mouse Tracking
+    window.addEventListener('mousemove', e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouseActive = true;
+        clearTimeout(window.mouseTimer);
+        window.mouseTimer = setTimeout(() => { mouseActive = false; }, 2000);
+    });
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 1.5;
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.angle = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            if (mouseActive && mouse.x != null) {
+                // Gravity effect: Move towards mouse
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const force = (width * 0.1) / distance; 
+                
+                if (distance < 300) {
+                    const angle = Math.atan2(dy, dx);
+                    this.vx += Math.cos(angle) * force * 0.02;
+                    this.vy += Math.sin(angle) * force * 0.02;
+                }
+            } else {
+                // Wave effect when idle
+                this.angle += 0.01;
+                this.vx += Math.cos(this.angle) * 0.002;
+                this.vy += Math.sin(this.angle) * 0.002;
+            }
+
+            // Friction
+            this.vx *= 0.98;
+            this.vy *= 0.98;
+
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Boundary wrap
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+        }
+
+        draw() {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Almost invisible
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Init Particles
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+/* === QUOTES LOGIC === */
 const quotes = [
     { text_en: "\"We are made of starstuff.\"", text_es: "\"Estamos hechos de polvo de estrellas.\"", author: "- Carl Sagan" },
     { text_en: "\"Somewhere, something incredible is waiting to be known.\"", text_es: "\"En algún lugar, algo increíble espera ser descubierto.\"", author: "- Carl Sagan" },
@@ -183,11 +310,8 @@ function cycleQuotes() {
 
     setTimeout(function() {
         quoteIndex = (quoteIndex + 1) % quotes.length;
-        // Reshuffle if we hit the end
         if(quoteIndex === 0) shuffleQuotes();
-        
         updateQuoteDisplay();
-        
         quoteTextEl.classList.add('visible');
         quoteAuthEl.classList.add('visible');
     }, 1000); 
@@ -204,15 +328,13 @@ function renderFilters(data) {
     const filtersContainer = document.querySelector('.filters');
     if (!filtersContainer) return;
 
-    // Get unique categories from JSON
+    // Get unique categories
     const categories = new Set(data.map(item => item.category).filter(c => c));
     const sortedCats = Array.from(categories).sort();
 
-    // Start with "All" button
     let html = `<button class="filter-btn active" data-filter="all" data-t="filter_all" onclick="filterGallery('all', this)">All</button>`;
 
     sortedCats.forEach(cat => {
-        // Create translation key 'cat_moon', 'cat_dso', etc.
         const tKey = `cat_${cat.toLowerCase()}`;
         html += `<button class="filter-btn" data-filter="${cat}" data-t="${tKey}" onclick="filterGallery('${cat}', this)">${cat}</button>`;
     });
@@ -225,6 +347,7 @@ function renderGallery(data) {
     const container = document.getElementById('dynamic-gallery-root');
     container.innerHTML = '';
 
+    // Group by Year (data is already sorted by date)
     const grouped = data.reduce((acc, item) => {
         (acc[item.year] = acc[item.year] || []).push(item);
         return acc;
@@ -248,11 +371,20 @@ function renderGallery(data) {
         grouped[year].forEach(item => {
             const itemDiv = document.createElement('div');
             itemDiv.className = `g-item ${item.category}`;
-            itemDiv.dataset.json = JSON.stringify(item);
-            itemDiv.onclick = function() { openLightbox(this); };
+            itemDiv.dataset.id = item.id; 
+            
+            // Store full item data for simpler retrieval later
+            itemDiv.onclick = function() { 
+                // Find index in current visibleItems array
+                const index = visibleItems.findIndex(x => x.id === item.id);
+                if(index !== -1) {
+                    currentImageIndex = index;
+                    openLightbox();
+                }
+            };
 
             itemDiv.innerHTML = `
-                <img src="${item.src}" alt="${item.object}" loading="lazy">
+                <img src="${item.src}" alt="${item.object_en}" loading="lazy">
                 <div class="overlay"><span data-t="details">DETAILS</span></div>
             `;
             grid.appendChild(itemDiv);
@@ -261,9 +393,114 @@ function renderGallery(data) {
         yearSection.appendChild(grid);
         container.appendChild(yearSection);
     });
-
-    setLanguage(currentLang);
 }
+
+/* === GALLERY FILTERING & GROUPING === */
+function filterGallery(category, clickedBtn) {
+    const yearSections = document.querySelectorAll('.year-section');
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    buttons.forEach(function(btn) { btn.classList.remove('active'); });
+    clickedBtn.classList.add('active');
+
+    // Update Visible Items Array for Lightbox Navigation
+    if(category === 'all') {
+        visibleItems = [...galleryData];
+    } else {
+        visibleItems = galleryData.filter(item => item.category === category);
+    }
+
+    // Update UI visibility
+    yearSections.forEach(function(section) {
+        let visibleCount = 0;
+        const items = section.querySelectorAll('.g-item');
+
+        items.forEach(function(item) {
+            if(category === 'all' || item.classList.contains(category)) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        section.style.display = (visibleCount === 0) ? 'none' : 'block';
+    });
+}
+
+/* === LIGHTBOX & NAVIGATION === */
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+
+function openLightbox() {
+    const item = visibleItems[currentImageIndex];
+    if(!item) return;
+    
+    updateLightboxContent(item);
+    lightbox.classList.add('active');
+}
+
+function updateLightboxContent(data) {
+    lbImg.src = data.src;
+    
+    const title = currentLang === 'en' ? data.title_en : data.title_es;
+    const story = currentLang === 'en' ? data.story_en : data.story_es;
+    
+    // Choose object name based on lang
+    const objName = currentLang === 'en' ? (data.object_en || data.object_es) : data.object_es;
+
+    document.getElementById('lb-title').innerText = title || objName;
+    
+    const storyContainer = document.getElementById('lb-story-container');
+    const storyText = document.getElementById('lb-story-text');
+    
+    if (story && story.trim() !== "") {
+        storyContainer.style.display = 'block';
+        storyText.innerText = story;
+    } else {
+        storyContainer.style.display = 'none';
+    }
+
+    document.getElementById('val-obj').innerText = objName;
+    document.getElementById('val-date').innerText = data.date;
+    document.getElementById('val-exp').innerText = data.exposure;
+    document.getElementById('val-equip').innerText = data.equipment;
+}
+
+function changeImage(direction) {
+    // direction: -1 (prev) or 1 (next)
+    currentImageIndex += direction;
+
+    // Loop around
+    if (currentImageIndex < 0) {
+        currentImageIndex = visibleItems.length - 1;
+    } else if (currentImageIndex >= visibleItems.length) {
+        currentImageIndex = 0;
+    }
+
+    updateLightboxContent(visibleItems[currentImageIndex]);
+}
+
+function closeLightbox() {
+    lightbox.classList.remove('active');
+}
+
+// Event Listeners for Lightbox
+if(lightbox) {
+    lightbox.addEventListener('click', function(e) {
+        if(e.target === lightbox || e.target.classList.contains('lb-content')) {
+            closeLightbox();
+        }
+    });
+}
+
+document.addEventListener('keydown', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") changeImage(-1);
+    if (e.key === "ArrowRight") changeImage(1);
+});
 
 /* === TAB SWITCHING === */
 function switchTab(tabName) {
@@ -287,96 +524,17 @@ function switchTab(tabName) {
     }
 }
 
-/* === GALLERY FILTERING === */
-function filterGallery(category, clickedBtn) {
-    const yearSections = document.querySelectorAll('.year-section');
-    const buttons = document.querySelectorAll('.filter-btn');
-
-    buttons.forEach(function(btn) { btn.classList.remove('active'); });
-    clickedBtn.classList.add('active');
-
-    yearSections.forEach(function(section) {
-        let visibleCount = 0;
-        const items = section.querySelectorAll('.g-item');
-
-        items.forEach(function(item) {
-            if(category === 'all' || item.classList.contains(category)) {
-                item.style.display = 'block';
-                visibleCount++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-
-        if (visibleCount === 0) {
-            section.style.display = 'none';
-        } else {
-            section.style.display = 'block';
-        }
-    });
-}
-
-/* === LIGHTBOX === */
-const lightbox = document.getElementById('lightbox');
-const lbImg = document.getElementById('lb-img');
-
-function openLightbox(elem) {
-    const data = JSON.parse(elem.dataset.json);
-
-    lbImg.src = data.src;
-    
-    const title = currentLang === 'en' ? data.title_en : data.title_es;
-    const story = currentLang === 'en' ? data.story_en : data.story_es;
-
-    document.getElementById('lb-title').innerText = title || data.object;
-    
-    const storyContainer = document.getElementById('lb-story-container');
-    const storyText = document.getElementById('lb-story-text');
-    
-    if (story && story.trim() !== "") {
-        storyContainer.style.display = 'block';
-        storyText.innerText = story;
-    } else {
-        storyContainer.style.display = 'none';
-    }
-
-    document.getElementById('val-obj').innerText = data.object;
-    document.getElementById('val-date').innerText = data.date;
-    document.getElementById('val-exp').innerText = data.exposure;
-    document.getElementById('val-equip').innerText = data.equipment;
-
-    lightbox.classList.add('active');
-}
-
-function closeLightbox() {
-    lightbox.classList.remove('active');
-}
-
-if(lightbox) {
-    lightbox.addEventListener('click', function(e) {
-        if(e.target === lightbox || e.target.classList.contains('lb-content')) {
-            closeLightbox();
-        }
-    });
-}
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === "Escape") closeLightbox();
-});
-
-/* === NAVBAR FADE & SCROLL TO TOP === */
+/* === NAVBAR SCROLL === */
 const navbar = document.getElementById('navbar');
 const scrollTopBtn = document.getElementById('scroll-top-btn');
 
 window.onscroll = function() {
-    // Navbar Fade
     if (window.scrollY > 50) {
         navbar.classList.add('nav-faded');
     } else {
         navbar.classList.remove('nav-faded');
     }
 
-    // Scroll Top Button Visibility
     if (window.scrollY > 500) {
         scrollTopBtn.classList.add('visible');
     } else {
