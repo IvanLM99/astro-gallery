@@ -10,6 +10,9 @@
 </head>
 <body>
 
+    <!-- 0. BACKGROUND PARTICLES -->
+    <canvas id="bg-canvas"></canvas>
+
     <!-- 1. BLACK HOLE & SUPERNOVA LOADER -->
     <div id="loader-overlay">
         <div class="accretion-disk"></div>
@@ -22,14 +25,14 @@
         </div>
         
         <div class="nav-center">
-            <button class="menu-btn active" id="btn-gallery" onclick="switchTab('gallery')">GALLERY</button>
-            <button class="menu-btn" id="btn-universe" onclick="switchTab('portfolio')">MY UNIVERSE</button>
+            <button class="menu-btn active" id="btn-gallery" onclick="switchTab('gallery')">GALERÍA</button>
+            <button class="menu-btn" id="btn-universe" onclick="switchTab('portfolio')">MI UNIVERSO</button>
         </div>
 
         <div class="nav-right">
             <div class="lang-select">
-                <span id="lang-en" class="lang active" onclick="setLanguage('en')">EN</span> / 
-                <span id="lang-es" class="lang" onclick="setLanguage('es')">ES</span>
+                <span id="lang-en" class="lang" onclick="setLanguage('en')">EN</span> / 
+                <span id="lang-es" class="lang active" onclick="setLanguage('es')">ES</span>
             </div>
         </div>
     </nav>
@@ -47,14 +50,14 @@
             
             <header class="gallery-header">
                 <div class="quote-container">
-                    <h1 id="quote-text" class="philosophical-quote">"We are made of starstuff."</h1>
+                    <h1 id="quote-text" class="philosophical-quote">"Estamos hechos de polvo de estrellas."</h1>
                     <p id="quote-author" class="quote-author">- Carl Sagan</p>
                 </div>
                 
                 <!-- Scrollable Filters Container -->
                 <div class="filters-wrapper">
                     <div class="filters">
-                        
+                        <!-- Dynamic buttons injected here -->
                     </div>
                 </div>
             </header>
@@ -151,6 +154,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </section>
         
         <!-- GLOBAL CONTACT FOOTER (Visible on both tabs) -->
@@ -169,8 +173,12 @@
     <!-- LIGHTBOX -->
     <div id="lightbox">
         <span class="close-lb" onclick="closeLightbox()">&times;</span>
+        
+        <!-- Navigation Buttons -->
+        <button class="lb-nav-btn prev-btn" onclick="changeImage(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="lb-nav-btn next-btn" onclick="changeImage(1)"><i class="fas fa-chevron-right"></i></button>
+
         <div class="lb-content">
-            <!-- Zoom removed -->
             <img id="lb-img" src="" alt="Expanded View">
             
             <div class="lb-info">
