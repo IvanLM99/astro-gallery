@@ -4,12 +4,18 @@ const translations = {
         "nav_gallery": "GALLERY",
         "nav_portfolio": "MY UNIVERSE",
         "details": "DETAILS",
-        "story1_title": "The First Glimpse",
-        "story1_text": "It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.",
-        "story2_title": "The Technical Pursuit",
-        "story2_text": "Astrophotography is where art meets rigorous science. It taught me patience—collecting light for hours to reveal what the human eye cannot see. Just like in Data Science, it is about extracting signal from noise, finding patterns in the chaos of the cosmos using tools like PixInsight and Python.",
-        "story3_title": "The Philosophy of Light",
-        "story3_text": "We are merely temporary observers of an eternal universe. Through my lens, I attempt to capture these fleeting moments of eternity. Whether it is the craters of the Moon or the dust lanes of Andromeda, each image is a humbled acknowledgement of our place in the void.",
+        "story1_title": "The Origin",
+        "story1_text": "In 2015, in high school, we were assigned to photograph something that reminded us of philosophy. I took this photo, unaware that it would lead me to who I am today. I wrote about loneliness, saying it could destroy us or allow us to appreciate things much more.",
+        "story2_title": "The Gravity",
+        "story2_text": "I related it to the stars, which, no matter how isolated they are, never stop shining. Since that moment my love for the universe has never stopped expanding. That intrigue for the unknown was subjected to the pull of my gravity.",
+        "story3_title": "The History",
+        "story3_text": "Allowing the release of energy from the event horizon, which ended up forming a great star cluster. An image is worth a thousand words, and all of these will form my history.",
+        "equip_title": "My Equipment",
+        "eq_dig_tel": "Digital Telescope",
+        "eq_tel": "Telescope",
+        "eq_cam": "Camera",
+        "eq_tripod": "Tripod",
+        "eq_mount": "Eq Mount",
         "profile_title": "Professional Profile",
         "exp_title": "Experience",
         "skills_title": "Core Competencies",
@@ -52,12 +58,18 @@ const translations = {
         "nav_gallery": "GALERÍA",
         "nav_portfolio": "MI UNIVERSO",
         "details": "DETALLES",
-        "story1_title": "El Primer Vistazo",
-        "story1_text": "No se trataba solo de mirar hacia arriba; se trataba de entender la escala de todo. El silencio del cielo nocturno en Mallorca ofrecía una perspectiva que el ruido del día nunca podría proporcionar. Me di cuenta de que cada fotón que golpeaba mi sensor había viajado miles de años solo para terminar su viaje aquí.",
-        "story2_title": "La Búsqueda Técnica",
-        "story2_text": "La astrofotografía es donde el arte se encuentra con la ciencia rigurosa. Me enseñó paciencia: recolectar luz durante horas para revelar lo que el ojo humano no puede ver. Al igual que en la Ciencia de Datos, se trata de extraer señal del ruido, encontrando patrones en el caos del cosmos utilizando herramientas como PixInsight y Python.",
-        "story3_title": "La Filosofía de la Luz",
-        "story3_text": "Somos meramente observadores temporales de un universo eterno. A través de mi lente, intento capturar estos momentos fugaces de eternidad. Ya sean los cráteres de la Luna o los carriles de polvo de Andrómeda, cada imagen es un humilde reconocimiento de nuestro lugar en el vacío.",
+        "story1_title": "El Origen",
+        "story1_text": "En 2015, en el instituto nos mandaron hacer un trabajo de fotografiar algo que nos recordase a la filosofía. Yo hice esta foto, sin saber que eso me llevaría a lo que soy hoy. Escribí sobre la soledad, diciendo que nos podría destruir o que nos permitiría apreciar las cosas mucho más.",
+        "story2_title": "La Gravedad",
+        "story2_text": "Lo relacioné con las estrellas, que por muy aisladas que se encuentren no dejan de brillar. Desde ese momento mi amor por el universo no dejó de expandirse. Esa intriga por lo aún desconocido se vió sometida a la atracción de mi gravedad.",
+        "story3_title": "La Historia",
+        "story3_text": "Permitiendo la liberación de energía del horizonte de sucesos, que acabaron formando un gran cumulo estelar. Una imágen vale más que mil palabras, y todas estas formarán mi historía.",
+        "equip_title": "Mi Equipo",
+        "eq_dig_tel": "Telescopio Digital",
+        "eq_tel": "Telescopio",
+        "eq_cam": "Cámara",
+        "eq_tripod": "Trípode",
+        "eq_mount": "Montura Eq",
         "profile_title": "Perfil Profesional",
         "exp_title": "Experiencia",
         "skills_title": "Competencias Clave",
@@ -97,43 +109,34 @@ const translations = {
     }
 };
 
-let currentLang = 'es'; // Main language changed to Spanish
+let currentLang = 'es'; 
 let galleryData = [];
-let visibleItems = []; // To track filtered list for Next/Prev
-let currentImageIndex = 0; // Index for Next/Prev
+let visibleItems = []; 
+let currentImageIndex = 0; 
 
 /* === INIT & FETCH DATA === */
 document.addEventListener('DOMContentLoaded', () => {
     fetch('gallery_data.json')
         .then(response => response.json())
         .then(data => {
-            // Sort data descending by date
             galleryData = sortDataByDate(data);
-            
-            // Initialize filters and gallery
             renderFilters(galleryData); 
             renderGallery(galleryData);
-            
-            // Initialize visible items as all items sorted
             visibleItems = [...galleryData];
-            
-            // Trigger translation update for dynamic content
             setLanguage(currentLang);
         })
         .catch(err => console.error('Error loading gallery data:', err));
     
     shuffleQuotes();
-    initParticles(); // Start background effect
+    initParticles(); 
 });
 
 /* === DATE SORTING === */
 function sortDataByDate(data) {
     return data.sort((a, b) => {
-        // Create Date objects from dd-mm-yyyy or similar
-        // Assumes format "DD-MM-YYYY" or uses year/month/day fields
         const d1 = new Date(a.year, a.month - 1, a.day);
         const d2 = new Date(b.year, b.month - 1, b.day);
-        return d2 - d1; // Descending (Newest first)
+        return d2 - d1; 
     });
 }
 
@@ -141,7 +144,6 @@ function sortDataByDate(data) {
 function setLanguage(lang) {
     currentLang = lang;
     
-    // Update Static Elements
     const elements = document.querySelectorAll('[data-t]');
     elements.forEach(function(el) {
         const key = el.getAttribute('data-t');
@@ -157,27 +159,25 @@ function setLanguage(lang) {
     if(btnGal) btnGal.textContent = translations[lang].nav_gallery;
     if(btnUni) btnUni.textContent = translations[lang].nav_portfolio;
 
-    // Toggle active class on lang switch
     document.getElementById('lang-en').classList.toggle('active', lang === 'en');
     document.getElementById('lang-es').classList.toggle('active', lang === 'es');
 
     updateQuoteDisplay();
     
-    // Update currently open lightbox if active
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox.classList.contains('active')) {
+    if (document.getElementById('lightbox').classList.contains('active')) {
         updateLightboxContent(visibleItems[currentImageIndex]);
     }
 }
 
-/* === PARTICLES BACKGROUND (New Feature) === */
+/* === PARTICLES BACKGROUND (UPDATED) === */
 function initParticles() {
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     
     let width, height;
     let particles = [];
-    const particleCount = 60; // Small dots
+    const particleCount = 150; // More particles acting as stars
+    let shootingStar = null;
     let mouse = { x: null, y: null };
     let mouseActive = false;
 
@@ -202,8 +202,8 @@ function initParticles() {
         constructor() {
             this.x = Math.random() * width;
             this.y = Math.random() * height;
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
+            this.vx = (Math.random() - 0.5) * 0.2; // Slower, more star-like
+            this.vy = (Math.random() - 0.5) * 0.2;
             this.size = Math.random() * 1.5;
             this.baseX = this.x;
             this.baseY = this.y;
@@ -212,32 +212,29 @@ function initParticles() {
 
         update() {
             if (mouseActive && mouse.x != null) {
-                // Gravity effect: Move towards mouse
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 const force = (width * 0.1) / distance; 
                 
-                if (distance < 300) {
+                if (distance < 200) {
                     const angle = Math.atan2(dy, dx);
-                    this.vx += Math.cos(angle) * force * 0.02;
-                    this.vy += Math.sin(angle) * force * 0.02;
+                    this.vx += Math.cos(angle) * force * 0.01;
+                    this.vy += Math.sin(angle) * force * 0.01;
                 }
             } else {
-                // Wave effect when idle
+                // Gentle twinkle motion
                 this.angle += 0.01;
-                this.vx += Math.cos(this.angle) * 0.002;
-                this.vy += Math.sin(this.angle) * 0.002;
+                this.vx += Math.cos(this.angle) * 0.001;
+                this.vy += Math.sin(this.angle) * 0.001;
             }
 
-            // Friction
             this.vx *= 0.98;
             this.vy *= 0.98;
 
             this.x += this.vx;
             this.y += this.vy;
 
-            // Boundary wrap
             if (this.x < 0) this.x = width;
             if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height;
@@ -245,10 +242,55 @@ function initParticles() {
         }
 
         draw() {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Almost invisible
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`; // Twinkle opacity
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
+        }
+    }
+
+    class ShootingStar {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = 0;
+            this.len = Math.random() * 80 + 10;
+            this.speed = Math.random() * 10 + 6;
+            this.size = Math.random() * 1 + 0.1;
+            // Angle between 45 and 80 degrees
+            this.waitTime = new Date().getTime() + Math.random() * 3000 + 3000;
+            this.active = false;
+        }
+
+        update() {
+            if (this.active) {
+                this.x -= this.speed;
+                this.y += this.speed;
+                if (this.x < 0 || this.y >= height) {
+                    this.active = false;
+                    this.waitTime = new Date().getTime() + Math.random() * 5000 + 2000; // Random wait before next
+                }
+            } else {
+                if (this.waitTime < new Date().getTime()) {
+                    this.active = true;
+                    this.x = Math.random() * width + 200; // Start offset
+                    this.y = -50;
+                }
+            }
+        }
+
+        draw() {
+            if (this.active) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = this.size;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x + this.len, this.y - this.len);
+                ctx.stroke();
+            }
         }
     }
 
@@ -256,13 +298,23 @@ function initParticles() {
     for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
     }
+    
+    // Init Shooting Star
+    shootingStar = new ShootingStar();
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
+        
         particles.forEach(p => {
             p.update();
             p.draw();
         });
+
+        if (shootingStar) {
+            shootingStar.update();
+            shootingStar.draw();
+        }
+
         requestAnimationFrame(animate);
     }
     animate();
@@ -270,19 +322,77 @@ function initParticles() {
 
 /* === QUOTES LOGIC === */
 const quotes = [
+    // Originals
     { text_en: "\"We are made of starstuff.\"", text_es: "\"Estamos hechos de polvo de estrellas.\"", author: "- Carl Sagan" },
     { text_en: "\"Somewhere, something incredible is waiting to be known.\"", text_es: "\"En algún lugar, algo increíble espera ser descubierto.\"", author: "- Carl Sagan" },
-    { text_en: "\"Eppur si muove.\"", text_es: "\"Y sin embargo, se mueve.\"", author: "- Galileo Galilei" },
-    { text_en: "\"Look up at the stars and not down at your feet.\"", text_es: "\"Mira a las estrellas y no a tus pies.\"", author: "- Stephen Hawking" },
-    { text_en: "\"The universe is under no obligation to make sense to you.\"", text_es: "\"El universo no tiene la obligación de tener sentido para ti.\"", author: "- Neil deGrasse Tyson" },
-    { text_en: "\"Two things are infinite: the universe and human stupidity.\"", text_es: "\"Dos cosas son infinitas: el universo y la estupidez humana.\"", author: "- Albert Einstein" },
-    { text_en: "\"The cosmos is within us. We are a way for the universe to know itself.\"", text_es: "\"El cosmos está dentro de nosotros. Somos una forma de que el universo se conozca a sí mismo.\"", author: "- Carl Sagan" },
+    
+    // Plato
     { text_en: "\"Astronomy compels the soul to look upwards and leads us from this world to another.\"", text_es: "\"La astronomía obliga al alma a mirar hacia arriba y nos lleva de este mundo a otro.\"", author: "- Plato" },
-    { text_en: "\"All truths are easy to understand once they are discovered; the point is to discover them.\"", text_es: "\"Todas las verdades son fáciles de entender una vez descubiertas; el punto es descubrirlas.\"", author: "- Galileo Galilei" },
-    { text_en: "\"The important thing is not to stop questioning. Curiosity has its own reason for existing.\"", text_es: "\"Lo importante es no dejar de cuestionar. La curiosidad tiene su propia razón de existir.\"", author: "- Albert Einstein" },
-    { text_en: "\"There are as many atoms in a single molecule of your DNA as there are stars in the typical galaxy.\"", text_es: "\"Hay tantos átomos en una sola molécula de tu ADN como estrellas en una galaxia típica.\"", author: "- Neil deGrasse Tyson" },
-    { text_en: "\"I loved the stars too fondly to be fearful of the night.\"", text_es: "\"Amé las estrellas con demasiado cariño como para tener miedo de la noche.\"", author: "- Sarah Williams" },
-    { text_en: "\"Mystery creates wonder and wonder is the basis of man's desire to understand.\"", text_es: "\"El misterio crea asombro y el asombro es la base del deseo del hombre por comprender.\"", author: "- Neil Armstrong" }
+    
+    // Socrates
+    { text_en: "\"I am not an Athenian or a Greek, but a citizen of the world.\"", text_es: "\"No soy ateniense ni griego, sino ciudadano del mundo.\"", author: "- Socrates" },
+    { text_en: "\"Wonder is the beginning of wisdom.\"", text_es: "\"El asombro es el comienzo de la sabiduría.\"", author: "- Socrates" },
+
+    // Aristotle
+    { text_en: "\"In all things of nature there is something of the marvelous.\"", text_es: "\"En todas las cosas de la naturaleza hay algo de maravilloso.\"", author: "- Aristotle" },
+    { text_en: "\"All men by nature desire to know.\"", text_es: "\"Todos los hombres desean por naturaleza saber.\"", author: "- Aristotle" },
+
+    // Marcus Aurelius
+    { text_en: "\"Dwell on the beauty of life. Watch the stars, and see yourself running with them.\"", text_es: "\"Detente en la belleza de la vida. Mira las estrellas y vete corriendo con ellas.\"", author: "- Marcus Aurelius" },
+
+    // Hypatia
+    { text_en: "\"Reserve your right to think, for even to think wrongly is better than not to think at all.\"", text_es: "\"Conserva tu derecho a pensar, porque incluso pensar erróneamente es mejor que no pensar en absoluto.\"", author: "- Hypatia of Alexandria" },
+
+    // Copernicus
+    { text_en: "\"To know that we know what we know, and to know that we do not know what we do not know, that is true knowledge.\"", text_es: "\"Saber que sabemos lo que sabemos, y saber que no sabemos lo que no sabemos, ese es el verdadero conocimiento.\"", author: "- Nicolaus Copernicus" },
+
+    // Galileo
+    { text_en: "\"The sun, with all those planets revolving around it and dependent on it, can still ripen a bunch of grapes as if it had nothing else in the universe to do.\"", text_es: "\"El sol, con todos esos planetas girando a su alrededor y dependiendo de él, todavía puede madurar un racimo de uvas como si no tuviera nada más que hacer en el universo.\"", author: "- Galileo Galilei" },
+    { text_en: "\"Mathematics is the language in which God has written the universe.\"", text_es: "\"Las matemáticas son el lenguaje en el que Dios ha escrito el universo.\"", author: "- Galileo Galilei" },
+
+    // Kepler
+    { text_en: "\"The treasures of the built-in secrets of the universe are not to be found in a single field.\"", text_es: "\"Los tesoros de los secretos ocultos del universo no se encuentran en un solo campo.\"", author: "- Johannes Kepler" },
+
+    // Newton
+    { text_en: "\"I seem to have been only like a boy playing on the seashore... whilst the great ocean of truth lay all undiscovered before me.\"", text_es: "\"Parezco haber sido solo como un niño jugando en la orilla del mar... mientras el gran océano de la verdad yacía todo sin descubrir ante mí.\"", author: "- Isaac Newton" },
+    { text_en: "\"If I have seen further it is by standing on the shoulders of Giants.\"", text_es: "\"Si he visto más lejos es poniéndome sobre los hombros de Gigantes.\"", author: "- Isaac Newton" },
+
+    // Hubble
+    { text_en: "\"Equipped with his five senses, man explores the universe around him and calls the adventure Science.\"", text_es: "\"Equipado con sus cinco sentidos, el hombre explora el universo que lo rodea y llama a la aventura Ciencia.\"", author: "- Edwin Hubble" },
+
+    // Einstein
+    { text_en: "\"The most beautiful thing we can experience is the mysterious. It is the source of all true art and science.\"", text_es: "\"Lo más hermoso que podemos experimentar es lo misterioso. Es la fuente de todo arte y ciencia verdaderos.\"", author: "- Albert Einstein" },
+    { text_en: "\"Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.\"", text_es: "\"La imaginación es más importante que el conocimiento. El conocimiento es limitado. La imaginación rodea al mundo.\"", author: "- Albert Einstein" },
+    { text_en: "\"Look deep into nature, and then you will understand everything better.\"", text_es: "\"Mira profundamente en la naturaleza y entonces entenderás todo mejor.\"", author: "- Albert Einstein" },
+
+    // Curie
+    { text_en: "\"Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less.\"", text_es: "\"Nada en la vida es para ser temido, es sólo para ser comprendido. Ahora es el momento de entender más, para que podamos temer menos.\"", author: "- Marie Curie" },
+
+    // Feynman
+    { text_en: "\"I’d rather have questions that can’t be answered than answers that can’t be questioned.\"", text_es: "\"Prefiero tener preguntas que no pueden ser respondidas que respuestas que no pueden ser cuestionadas.\"", author: "- Richard Feynman" },
+    { text_en: "\"Nature uses only the longest threads to weave her patterns, so that each small piece of her fabric reveals the organization of the entire tapestry.\"", text_es: "\"La naturaleza usa solo los hilos más largos para tejer sus patrones, de modo que cada pequeña pieza de su tela revela la organización de todo el tapiz.\"", author: "- Richard Feynman" },
+
+    // Hawking
+    { text_en: "\"Remember to look up at the stars and not down at your feet. Be curious.\"", text_es: "\"Recuerda mirar hacia arriba a las estrellas y no hacia abajo a tus pies. Sé curioso.\"", author: "- Stephen Hawking" },
+    { text_en: "\"The universe does not allow perfection.\"", text_es: "\"El universo no permite la perfección.\"", author: "- Stephen Hawking" },
+    { text_en: "\"We are just an advanced breed of monkeys on a minor planet of a very average star. But we can understand the Universe. That makes us something very special.\"", text_es: "\"Solo somos una raza avanzada de monos en un planeta menor de una estrella muy promedio. Pero podemos entender el Universo. Eso nos hace algo muy especial.\"", author: "- Stephen Hawking" },
+
+    // Planck
+    { text_en: "\"When you change the way you look at things, the things you look at change.\"", text_es: "\"Cuando cambias la forma en que miras las cosas, las cosas que miras cambian.\"", author: "- Max Planck" },
+
+    // Sagan
+    { text_en: "\"The cosmos is within us. We are made of star-stuff. We are a way for the cosmos to know itself.\"", text_es: "\"El cosmos está dentro de nosotros. Estamos hechos de material estelar. Somos una forma de que el cosmos se conozca a sí mismo.\"", author: "- Carl Sagan" },
+    { text_en: "\"For small creatures such as we the vastness is bearable only through love.\"", text_es: "\"Para criaturas pequeñas como nosotros, la inmensidad es soportable solo a través del amor.\"", author: "- Carl Sagan" },
+
+    // Tyson
+    { text_en: "\"The universe is under no obligation to make sense to you.\"", text_es: "\"El universo no tiene la obligación de tener sentido para ti.\"", author: "- Neil deGrasse Tyson" },
+    { text_en: "\"We are biologically connected to everything in the world and atomically connected to all atoms in the universe. We are not figuratively, but literally stardust.\"", text_es: "\"Estamos conectados biológicamente con todo en el mundo y atómicamente conectados con todos los átomos del universo. No somos figurativamente, sino literalmente polvo de estrellas.\"", author: "- Neil deGrasse Tyson" },
+
+    // Brian Cox
+    { text_en: "\"The story of the universe is our story. We are the cosmos made conscious.\"", text_es: "\"La historia del universo es nuestra historia. Somos el cosmos hecho consciente.\"", author: "- Brian Cox" },
+
+    // Michio Kaku
+    { text_en: "\"To understand the universe, you must understand the language of the stars.\"", text_es: "\"Para entender el universo, debes entender el lenguaje de las estrellas.\"", author: "- Michio Kaku" }
 ];
 
 let quoteIndex = 0;
@@ -328,7 +438,6 @@ function renderFilters(data) {
     const filtersContainer = document.querySelector('.filters');
     if (!filtersContainer) return;
 
-    // Get unique categories
     const categories = new Set(data.map(item => item.category).filter(c => c));
     const sortedCats = Array.from(categories).sort();
 
@@ -347,7 +456,6 @@ function renderGallery(data) {
     const container = document.getElementById('dynamic-gallery-root');
     container.innerHTML = '';
 
-    // Group by Year (data is already sorted by date)
     const grouped = data.reduce((acc, item) => {
         (acc[item.year] = acc[item.year] || []).push(item);
         return acc;
@@ -373,9 +481,7 @@ function renderGallery(data) {
             itemDiv.className = `g-item ${item.category}`;
             itemDiv.dataset.id = item.id; 
             
-            // Store full item data for simpler retrieval later
             itemDiv.onclick = function() { 
-                // Find index in current visibleItems array
                 const index = visibleItems.findIndex(x => x.id === item.id);
                 if(index !== -1) {
                     currentImageIndex = index;
@@ -403,14 +509,12 @@ function filterGallery(category, clickedBtn) {
     buttons.forEach(function(btn) { btn.classList.remove('active'); });
     clickedBtn.classList.add('active');
 
-    // Update Visible Items Array for Lightbox Navigation
     if(category === 'all') {
         visibleItems = [...galleryData];
     } else {
         visibleItems = galleryData.filter(item => item.category === category);
     }
 
-    // Update UI visibility
     yearSections.forEach(function(section) {
         let visibleCount = 0;
         const items = section.querySelectorAll('.g-item');
@@ -445,8 +549,6 @@ function updateLightboxContent(data) {
     
     const title = currentLang === 'en' ? data.title_en : data.title_es;
     const story = currentLang === 'en' ? data.story_en : data.story_es;
-    
-    // Choose object name based on lang
     const objName = currentLang === 'en' ? (data.object_en || data.object_es) : data.object_es;
 
     document.getElementById('lb-title').innerText = title || objName;
@@ -461,23 +563,31 @@ function updateLightboxContent(data) {
         storyContainer.style.display = 'none';
     }
 
-    document.getElementById('val-obj').innerText = objName;
-    document.getElementById('val-date').innerText = data.date;
-    document.getElementById('val-exp').innerText = data.exposure;
-    document.getElementById('val-equip').innerText = data.equipment;
+    // Spec Helper
+    function updateSpec(idSpan, idParent, val) {
+        const el = document.getElementById(idSpan);
+        const parent = document.getElementById(idParent);
+        if(!val || val.trim() === "") {
+            parent.style.display = 'none';
+        } else {
+            parent.style.display = 'block';
+            el.innerText = val;
+        }
+    }
+
+    updateSpec('val-obj', 'spec-obj', objName);
+    updateSpec('val-date', 'spec-date', data.date);
+    updateSpec('val-exp', 'spec-exp', data.exposure);
+    updateSpec('val-equip', 'spec-equip', data.equipment);
 }
 
 function changeImage(direction) {
-    // direction: -1 (prev) or 1 (next)
     currentImageIndex += direction;
-
-    // Loop around
     if (currentImageIndex < 0) {
         currentImageIndex = visibleItems.length - 1;
     } else if (currentImageIndex >= visibleItems.length) {
         currentImageIndex = 0;
     }
-
     updateLightboxContent(visibleItems[currentImageIndex]);
 }
 
@@ -485,7 +595,6 @@ function closeLightbox() {
     lightbox.classList.remove('active');
 }
 
-// Event Listeners for Lightbox
 if(lightbox) {
     lightbox.addEventListener('click', function(e) {
         if(e.target === lightbox || e.target.classList.contains('lb-content')) {
@@ -496,7 +605,6 @@ if(lightbox) {
 
 document.addEventListener('keydown', function(e) {
     if (!lightbox.classList.contains('active')) return;
-
     if (e.key === "Escape") closeLightbox();
     if (e.key === "ArrowLeft") changeImage(-1);
     if (e.key === "ArrowRight") changeImage(1);
