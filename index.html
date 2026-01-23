@@ -216,7 +216,12 @@
         <button class="lb-nav-btn next-btn" onclick="changeImage(1)"><i class="fas fa-chevron-right"></i></button>
 
         <div class="lb-content">
-            <img id="lb-img" src="" alt="Expanded View">
+            <!-- Wrapper for zoom functionality -->
+            <div class="lb-image-wrapper">
+                <div class="lb-image-container">
+                    <img id="lb-img" src="" alt="Expanded View">
+                </div>
+            </div>
             
             <div class="lb-info">
                 <h2 id="lb-title">Object Name</h2>
