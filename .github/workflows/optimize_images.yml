@@ -1,0 +1,37 @@
+name: Optimize Images & Update JSON
+
+on:
+  push:
+    paths:
+      - 'assets/**' # Only run when images are added
+  workflow_dispatch: # Allows manual trigger button
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install Pillow
+
+    - name: Run Gallery Script
+      run: python optimize_gallery.py
+
+    - name: Commit and Push changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-generated WebP thumbnails and JSON update"
+        file_pattern: 'assets/**/*.webp gallery_data.json'
