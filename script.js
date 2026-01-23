@@ -41,7 +41,7 @@ const translations = {
         "lb_date": "DATE",
         "lb_exp": "EXPOSURE",
         "lb_equip": "EQUIPMENT",
-        "zoom_hint": "Click image to zoom",
+        "zoom_hint": "Scroll to zoom, Drag to pan",
         "filter_all": "All",
         // Dynamic filters default labels
         "cat_moon": "Moon",
@@ -95,7 +95,7 @@ const translations = {
         "lb_date": "FECHA",
         "lb_exp": "EXPOSICIÓN",
         "lb_equip": "EQUIPO",
-        "zoom_hint": "Haz clic para hacer zoom",
+        "zoom_hint": "Rueda para zoom, Arrastra para mover",
         "filter_all": "Todo",
         "cat_moon": "Luna",
         "cat_dso": "Cielo Profundo",
@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderGallery(galleryData);
             visibleItems = [...galleryData];
             setLanguage(currentLang);
+            initZoomLogic(); // Initialize Zoom Event Listeners
         })
         .catch(err => console.error('Error loading gallery data:', err));
     
@@ -169,14 +170,14 @@ function setLanguage(lang) {
     }
 }
 
-/* === PARTICLES BACKGROUND (UPDATED) === */
+/* === PARTICLES BACKGROUND === */
 function initParticles() {
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     
     let width, height;
     let particles = [];
-    const particleCount = 150; // More particles acting as stars
+    const particleCount = 150; 
     let shootingStar = null;
     let mouse = { x: null, y: null };
     let mouseActive = false;
@@ -202,7 +203,7 @@ function initParticles() {
         constructor() {
             this.x = Math.random() * width;
             this.y = Math.random() * height;
-            this.vx = (Math.random() - 0.5) * 0.2; // Slower, more star-like
+            this.vx = (Math.random() - 0.5) * 0.2; 
             this.vy = (Math.random() - 0.5) * 0.2;
             this.size = Math.random() * 1.5;
             this.baseX = this.x;
@@ -223,7 +224,6 @@ function initParticles() {
                     this.vy += Math.sin(angle) * force * 0.01;
                 }
             } else {
-                // Gentle twinkle motion
                 this.angle += 0.01;
                 this.vx += Math.cos(this.angle) * 0.001;
                 this.vy += Math.sin(this.angle) * 0.001;
@@ -242,7 +242,7 @@ function initParticles() {
         }
 
         draw() {
-            ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`; // Twinkle opacity
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`; 
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
@@ -260,7 +260,6 @@ function initParticles() {
             this.len = Math.random() * 80 + 10;
             this.speed = Math.random() * 10 + 6;
             this.size = Math.random() * 1 + 0.1;
-            // Angle between 45 and 80 degrees
             this.waitTime = new Date().getTime() + Math.random() * 3000 + 3000;
             this.active = false;
         }
@@ -271,12 +270,12 @@ function initParticles() {
                 this.y += this.speed;
                 if (this.x < 0 || this.y >= height) {
                     this.active = false;
-                    this.waitTime = new Date().getTime() + Math.random() * 5000 + 2000; // Random wait before next
+                    this.waitTime = new Date().getTime() + Math.random() * 5000 + 2000; 
                 }
             } else {
                 if (this.waitTime < new Date().getTime()) {
                     this.active = true;
-                    this.x = Math.random() * width + 200; // Start offset
+                    this.x = Math.random() * width + 200; 
                     this.y = -50;
                 }
             }
@@ -294,27 +293,16 @@ function initParticles() {
         }
     }
 
-    // Init Particles
     for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
     }
     
-    // Init Shooting Star
     shootingStar = new ShootingStar();
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
-        
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-
-        if (shootingStar) {
-            shootingStar.update();
-            shootingStar.draw();
-        }
-
+        particles.forEach(p => { p.update(); p.draw(); });
+        if (shootingStar) { shootingStar.update(); shootingStar.draw(); }
         requestAnimationFrame(animate);
     }
     animate();
@@ -451,7 +439,7 @@ function renderFilters(data) {
     filtersContainer.innerHTML = html;
 }
 
-/* === DYNAMIC GALLERY RENDER === */
+/* === DYNAMIC GALLERY RENDER (WITH WEBP THUMBNAIL LOGIC) === */
 function renderGallery(data) {
     const container = document.getElementById('dynamic-gallery-root');
     container.innerHTML = '';
@@ -489,8 +477,17 @@ function renderGallery(data) {
                 }
             };
 
+            // THUMBNAIL LOGIC:
+            // Tries to find 'filename_thumb.webp' instead of 'filename.jpg'.
+            // If it fails (onerror), loads the original big image.
+            const ext = item.src.split('.').pop();
+            const thumbSrc = item.src.replace(`.${ext}`, `_thumb.webp`);
+
             itemDiv.innerHTML = `
-                <img src="${item.src}" alt="${item.object_en}" loading="lazy">
+                <img src="${thumbSrc}" 
+                     alt="${item.object_en}" 
+                     loading="lazy" 
+                     onerror="this.onerror=null; this.src='${item.src}';">
                 <div class="overlay"><span data-t="details">DETAILS</span></div>
             `;
             grid.appendChild(itemDiv);
@@ -532,9 +529,18 @@ function filterGallery(category, clickedBtn) {
     });
 }
 
-/* === LIGHTBOX & NAVIGATION === */
+/* === LIGHTBOX & ZOOM LOGIC === */
 const lightbox = document.getElementById('lightbox');
 const lbImg = document.getElementById('lb-img');
+const lbContainer = document.querySelector('.lb-image-container'); // Wrapper for zoom
+
+// Zoom Variables
+let scale = 1;
+let panning = false;
+let pointX = 0;
+let pointY = 0;
+let startX = 0;
+let startY = 0;
 
 function openLightbox() {
     const item = visibleItems[currentImageIndex];
@@ -542,9 +548,18 @@ function openLightbox() {
     
     updateLightboxContent(item);
     lightbox.classList.add('active');
+    document.body.classList.add('no-scroll'); // Prevent background scroll
+    resetZoom(); 
+}
+
+function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.classList.remove('no-scroll');
+    resetZoom();
 }
 
 function updateLightboxContent(data) {
+    // Lightbox always loads the High-Res Image
     lbImg.src = data.src;
     
     const title = currentLang === 'en' ? data.title_en : data.title_es;
@@ -589,14 +604,87 @@ function changeImage(direction) {
         currentImageIndex = 0;
     }
     updateLightboxContent(visibleItems[currentImageIndex]);
+    resetZoom();
 }
 
-function closeLightbox() {
-    lightbox.classList.remove('active');
+/* ZOOM IMPLEMENTATION */
+function initZoomLogic() {
+    const wrapper = document.querySelector('.lb-image-wrapper');
+    if(!wrapper) return;
+
+    // Mouse Wheel Zoom
+    wrapper.addEventListener('wheel', (e) => {
+        e.preventDefault();
+
+        const xs = (e.offsetX - pointX) / scale;
+        const ys = (e.offsetY - pointY) / scale;
+        
+        // Adjust zoom speed
+        const delta = -Math.sign(e.deltaY) * 0.2;
+        
+        const oldScale = scale;
+        scale += delta;
+        scale = Math.min(Math.max(1, scale), 5); // Max zoom 5x, Min 1x
+
+        if (scale > 1) {
+            pointX += xs * (scale - oldScale); // Pan towards mouse
+            pointY += ys * (scale - oldScale);
+        } else {
+            // Reset position if zoomed out completely
+            pointX = 0;
+            pointY = 0;
+        }
+
+        setTransform();
+    });
+
+    // Mouse Drag (Pan)
+    wrapper.addEventListener('mousedown', (e) => {
+        if(scale > 1) {
+            e.preventDefault();
+            startX = e.clientX - pointX;
+            startY = e.clientY - pointY;
+            panning = true;
+            wrapper.style.cursor = "grabbing";
+        }
+    });
+
+    wrapper.addEventListener('mousemove', (e) => {
+        if (!panning) return;
+        e.preventDefault();
+        pointX = e.clientX - startX;
+        pointY = e.clientY - startY;
+        setTransform();
+    });
+
+    wrapper.addEventListener('mouseup', () => {
+        panning = false;
+        wrapper.style.cursor = "grab";
+    });
+    
+    wrapper.addEventListener('mouseleave', () => {
+        panning = false;
+        wrapper.style.cursor = "grab";
+    });
 }
 
+function setTransform() {
+    lbContainer.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+}
+
+function resetZoom() {
+    scale = 1;
+    pointX = 0;
+    pointY = 0;
+    panning = false;
+    setTransform();
+}
+
+/* EVENT LISTENERS FOR LIGHTBOX CLOSING */
 if(lightbox) {
     lightbox.addEventListener('click', function(e) {
+        // Close if clicked outside the image or on the close button (handled by onclick)
+        // Check if target is lightbox padding area or close button
         if(e.target === lightbox || e.target.classList.contains('lb-content')) {
             closeLightbox();
         }
