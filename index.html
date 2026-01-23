@@ -73,36 +73,73 @@
             <div class="story-container">
                 <div class="story-row">
                     <div class="story-img">
-                        <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=800" alt="Night Sky">
+                        <!-- 1st Image: First image of sky -->
+                        <img src="assets/2015/IMG-20150719-WA0000.jpg" alt="First sky image">
                     </div>
                     <div class="story-text">
-                        <h3 data-t="story1_title">The First Glimpse</h3>
-                        <p data-t="story1_text">It wasn't just about looking up; it was about understanding the scale of it all. The silence of the night sky in Mallorca offered a perspective that the noise of the day could never provide. I realized that every photon hitting my sensor had traveled thousands of years just to end its journey here.</p>
+                        <h3 data-t="story1_title">The Origin</h3>
+                        <p data-t="story1_text">In 2015, in high school, we were assigned to photograph something that reminded us of philosophy. I took this photo, unaware that it would lead me to who I am today. I wrote about loneliness, saying it could destroy us or allow us to appreciate things much more.</p>
                     </div>
                 </div>
 
                 <div class="story-row reverse">
                     <div class="story-text">
-                        <h3 data-t="story2_title">The Technical Pursuit</h3>
-                        <p data-t="story2_text">Astrophotography is where art meets rigorous science. It taught me patience—collecting light for hours to reveal what the human eye cannot see. Just like in Data Science, it is about extracting signal from noise, finding patterns in the chaos of the cosmos using tools like PixInsight and Python.</p>
+                        <h3 data-t="story2_title">The Gravity</h3>
+                        <p data-t="story2_text">I related it to the stars, which, no matter how isolated they are, never stop shining. Since that moment, my love for the universe has never stopped expanding. That intrigue for the unknown was subjected to the pull of my gravity.</p>
                     </div>
                     <div class="story-img">
-                        <img src="https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=800" alt="Telescope">
+                        <!-- 2nd Image: Sunset of home -->
+                        <img src="assets/2024/IMG_1545.jpeg" alt="Sunset">
                     </div>
                 </div>
 
                 <div class="story-row">
                     <div class="story-img">
-                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800" alt="Universe">
+                        <!-- 3rd Image: Moon with telescope -->
+                        <img src="assets/2024/IMG_0329.jpeg" alt="Moon telescope">
                     </div>
                     <div class="story-text">
-                        <h3 data-t="story3_title">The Philosophy of Light</h3>
-                        <p data-t="story3_text">We are merely temporary observers of an eternal universe. Through my lens, I attempt to capture these fleeting moments of eternity. Whether it is the craters of the Moon or the dust lanes of Andromeda, each image is a humbled acknowledgement of our place in the void.</p>
+                        <h3 data-t="story3_title">The History</h3>
+                        <p data-t="story3_text">Allowing the release of energy from the event horizon, which ended up forming a great star cluster. An image is worth a thousand words, and all of these will form my history.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="parallax-divider"></div>
+            <!-- 4th Image: Parallax Separator -->
+            <!-- We apply the style inline or via CSS targeting this specific ID to use the image as background -->
+            <div class="parallax-divider" style="background-image: url('assets/EclipseUs.jpg');"></div>
+
+            <!-- EQUIPMENT SECTION -->
+            <div class="equipment-wrapper">
+                <h2 class="cv-main-title" data-t="equip_title">My Equipment</h2>
+                <div class="equipment-grid">
+                    <div class="equip-item">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span class="equip-label" data-t="eq_dig_tel">Digital Telescope</span>
+                        <span class="equip-val">Seestar S30 Pro</span>
+                    </div>
+                    <div class="equip-item">
+                        <i class="fas fa-binoculars"></i>
+                        <span class="equip-label" data-t="eq_tel">Telescope</span>
+                        <span class="equip-val">Nassa X210</span>
+                    </div>
+                    <div class="equip-item">
+                        <i class="fas fa-camera"></i>
+                        <span class="equip-label" data-t="eq_cam">Camera</span>
+                        <span class="equip-val">Olympus E420</span>
+                    </div>
+                    <div class="equip-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="equip-label" data-t="eq_tripod">Tripod</span>
+                        <span class="equip-val">...</span>
+                    </div>
+                    <div class="equip-item">
+                        <i class="fas fa-compass"></i>
+                        <span class="equip-label" data-t="eq_mount">Eq Mount</span>
+                        <span class="equip-val">...</span>
+                    </div>
+                </div>
+            </div>
 
             <div class="cv-wrapper">
                 <h2 class="cv-main-title" data-t="profile_title">Professional Profile</h2>
@@ -190,19 +227,19 @@
                 </div>
 
                 <div class="tech-specs">
-                    <div class="spec">
+                    <div class="spec" id="spec-obj">
                         <span data-t="lb_obj">OBJECT</span>
                         <span id="val-obj">--</span>
                     </div>
-                    <div class="spec">
+                    <div class="spec" id="spec-date">
                         <span data-t="lb_date">DATE</span>
                         <span id="val-date">--</span>
                     </div>
-                    <div class="spec">
+                    <div class="spec" id="spec-exp">
                         <span data-t="lb_exp">EXPOSURE</span>
                         <span id="val-exp">--</span>
                     </div>
-                    <div class="spec">
+                    <div class="spec" id="spec-equip">
                         <span data-t="lb_equip">EQUIPMENT</span>
                         <span id="val-equip">--</span>
                     </div>
