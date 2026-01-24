@@ -32,7 +32,7 @@ body.no-scroll {
     pointer-events: none;
 }
 
-/* === 1. BLACK HOLE & SUPERNOVA LOADER (OPTIMIZED) === */
+/* === 1. BLACK HOLE & SUPERNOVA LOADER === */
 #loader-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100vh;
@@ -46,12 +46,10 @@ body.no-scroll {
 }
 
 .accretion-disk {
-    /* Fixed size to allow transform: scale optimization */
     width: 300px; height: 300px; 
     border-radius: 50%;
     box-shadow: 0 0 60px 20px rgba(255, 255, 255, 1);
     background: #000;
-    /* Changed to transform for better performance (no layout thrashing) */
     transform: scale(0.5); 
     opacity: 0;
     animation: implode 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -207,7 +205,6 @@ nav.nav-faded:hover {
 .year-title {
     font-family: var(--font-serif);
     font-size: 2rem; 
-    /* CHANGED: Lighter color for better contrast (Accessibility Fix) */
     color: #888; 
     border-bottom: 1px solid #222;
     margin-bottom: 30px;
@@ -462,7 +459,7 @@ nav.nav-faded:hover {
 .prev-btn { left: 20px; }
 .next-btn { right: 20px; }
 
-/* === MOBILE RESPONSIVENESS === */
+/* === MOBILE RESPONSIVENESS (CHANGE #3 - GRID) === */
 @media(max-width: 768px) {
     nav { 
         padding: 15px 20px; 
@@ -482,7 +479,9 @@ nav.nav-faded:hover {
     .content-container { padding: 20px 15px; }
     
     .gallery-grid { 
-        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); 
+        /* UPDATED for 2 columns on mobile */
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
     }
     
     .story-row, .story-row.reverse { flex-direction: column; gap: 30px; }

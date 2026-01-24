@@ -310,76 +310,37 @@ function initParticles() {
 
 /* === QUOTES LOGIC === */
 const quotes = [
-    // Originals
     { text_en: "\"We are made of starstuff.\"", text_es: "\"Estamos hechos de polvo de estrellas.\"", author: "- Carl Sagan" },
     { text_en: "\"Somewhere, something incredible is waiting to be known.\"", text_es: "\"En algún lugar, algo increíble espera ser descubierto.\"", author: "- Carl Sagan" },
-    
-    // Plato
     { text_en: "\"Astronomy compels the soul to look upwards and leads us from this world to another.\"", text_es: "\"La astronomía obliga al alma a mirar hacia arriba y nos lleva de este mundo a otro.\"", author: "- Plato" },
-    
-    // Socrates
     { text_en: "\"I am not an Athenian or a Greek, but a citizen of the world.\"", text_es: "\"No soy ateniense ni griego, sino ciudadano del mundo.\"", author: "- Socrates" },
     { text_en: "\"Wonder is the beginning of wisdom.\"", text_es: "\"El asombro es el comienzo de la sabiduría.\"", author: "- Socrates" },
-
-    // Aristotle
     { text_en: "\"In all things of nature there is something of the marvelous.\"", text_es: "\"En todas las cosas de la naturaleza hay algo de maravilloso.\"", author: "- Aristotle" },
     { text_en: "\"All men by nature desire to know.\"", text_es: "\"Todos los hombres desean por naturaleza saber.\"", author: "- Aristotle" },
-
-    // Marcus Aurelius
     { text_en: "\"Dwell on the beauty of life. Watch the stars, and see yourself running with them.\"", text_es: "\"Detente en la belleza de la vida. Mira las estrellas y vete corriendo con ellas.\"", author: "- Marcus Aurelius" },
-
-    // Hypatia
     { text_en: "\"Reserve your right to think, for even to think wrongly is better than not to think at all.\"", text_es: "\"Conserva tu derecho a pensar, porque incluso pensar erróneamente es mejor que no pensar en absoluto.\"", author: "- Hypatia of Alexandria" },
-
-    // Copernicus
     { text_en: "\"To know that we know what we know, and to know that we do not know what we do not know, that is true knowledge.\"", text_es: "\"Saber que sabemos lo que sabemos, y saber que no sabemos lo que no sabemos, ese es el verdadero conocimiento.\"", author: "- Nicolaus Copernicus" },
-
-    // Galileo
     { text_en: "\"The sun, with all those planets revolving around it and dependent on it, can still ripen a bunch of grapes as if it had nothing else in the universe to do.\"", text_es: "\"El sol, con todos esos planetas girando a su alrededor y dependiendo de él, todavía puede madurar un racimo de uvas como si no tuviera nada más que hacer en el universo.\"", author: "- Galileo Galilei" },
     { text_en: "\"Mathematics is the language in which God has written the universe.\"", text_es: "\"Las matemáticas son el lenguaje en el que Dios ha escrito el universo.\"", author: "- Galileo Galilei" },
-
-    // Kepler
     { text_en: "\"The treasures of the built-in secrets of the universe are not to be found in a single field.\"", text_es: "\"Los tesoros de los secretos ocultos del universo no se encuentran en un solo campo.\"", author: "- Johannes Kepler" },
-
-    // Newton
     { text_en: "\"I seem to have been only like a boy playing on the seashore... whilst the great ocean of truth lay all undiscovered before me.\"", text_es: "\"Parezco haber sido solo como un niño jugando en la orilla del mar... mientras el gran océano de la verdad yacía todo sin descubrir ante mí.\"", author: "- Isaac Newton" },
     { text_en: "\"If I have seen further it is by standing on the shoulders of Giants.\"", text_es: "\"Si he visto más lejos es poniéndome sobre los hombros de Gigantes.\"", author: "- Isaac Newton" },
-
-    // Hubble
     { text_en: "\"Equipped with his five senses, man explores the universe around him and calls the adventure Science.\"", text_es: "\"Equipado con sus cinco sentidos, el hombre explora el universo que lo rodea y llama a la aventura Ciencia.\"", author: "- Edwin Hubble" },
-
-    // Einstein
     { text_en: "\"The most beautiful thing we can experience is the mysterious. It is the source of all true art and science.\"", text_es: "\"Lo más hermoso que podemos experimentar es lo misterioso. Es la fuente de todo arte y ciencia verdaderos.\"", author: "- Albert Einstein" },
     { text_en: "\"Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.\"", text_es: "\"La imaginación es más importante que el conocimiento. El conocimiento es limitado. La imaginación rodea al mundo.\"", author: "- Albert Einstein" },
     { text_en: "\"Look deep into nature, and then you will understand everything better.\"", text_es: "\"Mira profundamente en la naturaleza y entonces entenderás todo mejor.\"", author: "- Albert Einstein" },
-
-    // Curie
     { text_en: "\"Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less.\"", text_es: "\"Nada en la vida es para ser temido, es sólo para ser comprendido. Ahora es el momento de entender más, para que podamos temer menos.\"", author: "- Marie Curie" },
-
-    // Feynman
     { text_en: "\"I’d rather have questions that can’t be answered than answers that can’t be questioned.\"", text_es: "\"Prefiero tener preguntas que no pueden ser respondidas que respuestas que no pueden ser cuestionadas.\"", author: "- Richard Feynman" },
     { text_en: "\"Nature uses only the longest threads to weave her patterns, so that each small piece of her fabric reveals the organization of the entire tapestry.\"", text_es: "\"La naturaleza usa solo los hilos más largos para tejer sus patrones, de modo que cada pequeña pieza de su tela revela la organización de todo el tapiz.\"", author: "- Richard Feynman" },
-
-    // Hawking
     { text_en: "\"Remember to look up at the stars and not down at your feet. Be curious.\"", text_es: "\"Recuerda mirar hacia arriba a las estrellas y no hacia abajo a tus pies. Sé curioso.\"", author: "- Stephen Hawking" },
     { text_en: "\"The universe does not allow perfection.\"", text_es: "\"El universo no permite la perfección.\"", author: "- Stephen Hawking" },
     { text_en: "\"We are just an advanced breed of monkeys on a minor planet of a very average star. But we can understand the Universe. That makes us something very special.\"", text_es: "\"Solo somos una raza avanzada de monos en un planeta menor de una estrella muy promedio. Pero podemos entender el Universo. Eso nos hace algo muy especial.\"", author: "- Stephen Hawking" },
-
-    // Planck
     { text_en: "\"When you change the way you look at things, the things you look at change.\"", text_es: "\"Cuando cambias la forma en que miras las cosas, las cosas que miras cambian.\"", author: "- Max Planck" },
-
-    // Sagan
     { text_en: "\"The cosmos is within us. We are made of star-stuff. We are a way for the cosmos to know itself.\"", text_es: "\"El cosmos está dentro de nosotros. Estamos hechos de material estelar. Somos una forma de que el cosmos se conozca a sí mismo.\"", author: "- Carl Sagan" },
     { text_en: "\"For small creatures such as we the vastness is bearable only through love.\"", text_es: "\"Para criaturas pequeñas como nosotros, la inmensidad es soportable solo a través del amor.\"", author: "- Carl Sagan" },
-
-    // Tyson
     { text_en: "\"The universe is under no obligation to make sense to you.\"", text_es: "\"El universo no tiene la obligación de tener sentido para ti.\"", author: "- Neil deGrasse Tyson" },
     { text_en: "\"We are biologically connected to everything in the world and atomically connected to all atoms in the universe. We are not figuratively, but literally stardust.\"", text_es: "\"Estamos conectados biológicamente con todo en el mundo y atómicamente conectados con todos los átomos del universo. No somos figurativamente, sino literalmente polvo de estrellas.\"", author: "- Neil deGrasse Tyson" },
-
-    // Brian Cox
     { text_en: "\"The story of the universe is our story. We are the cosmos made conscious.\"", text_es: "\"La historia del universo es nuestra historia. Somos el cosmos hecho consciente.\"", author: "- Brian Cox" },
-
-    // Michio Kaku
     { text_en: "\"To understand the universe, you must understand the language of the stars.\"", text_es: "\"Para entender el universo, debes entender el lenguaje de las estrellas.\"", author: "- Michio Kaku" }
 ];
 
@@ -692,6 +653,33 @@ document.addEventListener('keydown', function(e) {
     if (e.key === "ArrowLeft") changeImage(-1);
     if (e.key === "ArrowRight") changeImage(1);
 });
+
+/* === CHANGE #3: MOBILE SWIPE GESTURES === */
+let touchStartX = 0;
+let touchEndX = 0;
+
+// Attach swipe listener to the main lightbox overlay
+lightbox.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+}, {passive: true});
+
+lightbox.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}, {passive: true});
+
+function handleSwipe() {
+    // 50px threshold to register as a swipe
+    if (touchEndX < touchStartX - 50) {
+        // Swipe Left -> Next Image
+        changeImage(1); 
+    }
+    if (touchEndX > touchStartX + 50) {
+        // Swipe Right -> Prev Image
+        changeImage(-1); 
+    }
+}
+/* ======================================== */
 
 /* === TAB SWITCHING === */
 function switchTab(tabName) {
