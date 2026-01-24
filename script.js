@@ -439,7 +439,7 @@ function renderFilters(data) {
     filtersContainer.innerHTML = html;
 }
 
-/* === DYNAMIC GALLERY RENDER (WITH WEBP THUMBNAIL LOGIC) === */
+/* === DYNAMIC GALLERY RENDER (OPTIMIZED LCP) === */
 function renderGallery(data) {
     const container = document.getElementById('dynamic-gallery-root');
     container.innerHTML = '';
@@ -450,6 +450,7 @@ function renderGallery(data) {
     }, {});
 
     const years = Object.keys(grouped).sort((a, b) => b - a);
+    let globalImageCount = 0; // Track how many images we've rendered so far
 
     years.forEach(year => {
         const yearSection = document.createElement('div');
@@ -477,16 +478,19 @@ function renderGallery(data) {
                 }
             };
 
-            // THUMBNAIL LOGIC:
-            // Tries to find 'filename_thumb.webp' instead of 'filename.jpg'.
-            // If it fails (onerror), loads the original big image.
             const ext = item.src.split('.').pop();
             const thumbSrc = item.src.replace(`.${ext}`, `_thumb.webp`);
+
+            // LCP OPTIMIZATION:
+            // First 4 images get loading="eager" (default), rest get "lazy".
+            // This prevents the "Avoid lazy loading for LCP element" warning.
+            const loadingAttr = globalImageCount < 4 ? 'eager' : 'lazy';
+            globalImageCount++;
 
             itemDiv.innerHTML = `
                 <img src="${thumbSrc}" 
                      alt="${item.object_en}" 
-                     loading="lazy" 
+                     loading="${loadingAttr}" 
                      onerror="this.onerror=null; this.src='${item.src}';">
                 <div class="overlay"><span data-t="details">DETAILS</span></div>
             `;
@@ -532,7 +536,7 @@ function filterGallery(category, clickedBtn) {
 /* === LIGHTBOX & ZOOM LOGIC === */
 const lightbox = document.getElementById('lightbox');
 const lbImg = document.getElementById('lb-img');
-const lbContainer = document.querySelector('.lb-image-container'); // Wrapper for zoom
+const lbContainer = document.querySelector('.lb-image-container');
 
 // Zoom Variables
 let scale = 1;
@@ -548,7 +552,7 @@ function openLightbox() {
     
     updateLightboxContent(item);
     lightbox.classList.add('active');
-    document.body.classList.add('no-scroll'); // Prevent background scroll
+    document.body.classList.add('no-scroll'); 
     resetZoom(); 
 }
 
@@ -559,7 +563,6 @@ function closeLightbox() {
 }
 
 function updateLightboxContent(data) {
-    // Lightbox always loads the High-Res Image
     lbImg.src = data.src;
     
     const title = currentLang === 'en' ? data.title_en : data.title_es;
@@ -578,7 +581,6 @@ function updateLightboxContent(data) {
         storyContainer.style.display = 'none';
     }
 
-    // Spec Helper
     function updateSpec(idSpan, idParent, val) {
         const el = document.getElementById(idSpan);
         const parent = document.getElementById(idParent);
@@ -612,25 +614,22 @@ function initZoomLogic() {
     const wrapper = document.querySelector('.lb-image-wrapper');
     if(!wrapper) return;
 
-    // Mouse Wheel Zoom
     wrapper.addEventListener('wheel', (e) => {
         e.preventDefault();
 
         const xs = (e.offsetX - pointX) / scale;
         const ys = (e.offsetY - pointY) / scale;
         
-        // Adjust zoom speed
         const delta = -Math.sign(e.deltaY) * 0.2;
         
         const oldScale = scale;
         scale += delta;
-        scale = Math.min(Math.max(1, scale), 5); // Max zoom 5x, Min 1x
+        scale = Math.min(Math.max(1, scale), 5); 
 
         if (scale > 1) {
-            pointX += xs * (scale - oldScale); // Pan towards mouse
+            pointX += xs * (scale - oldScale); 
             pointY += ys * (scale - oldScale);
         } else {
-            // Reset position if zoomed out completely
             pointX = 0;
             pointY = 0;
         }
@@ -638,7 +637,6 @@ function initZoomLogic() {
         setTransform();
     });
 
-    // Mouse Drag (Pan)
     wrapper.addEventListener('mousedown', (e) => {
         if(scale > 1) {
             e.preventDefault();
@@ -680,11 +678,8 @@ function resetZoom() {
     setTransform();
 }
 
-/* EVENT LISTENERS FOR LIGHTBOX CLOSING */
 if(lightbox) {
     lightbox.addEventListener('click', function(e) {
-        // Close if clicked outside the image or on the close button (handled by onclick)
-        // Check if target is lightbox padding area or close button
         if(e.target === lightbox || e.target.classList.contains('lb-content')) {
             closeLightbox();
         }
