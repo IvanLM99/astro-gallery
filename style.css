@@ -17,7 +17,6 @@ body {
     min-height: 100vh;
 }
 
-/* Prevent body scrolling when lightbox is open */
 body.no-scroll {
     overflow: hidden;
 }
@@ -30,10 +29,10 @@ body.no-scroll {
     width: 100%;
     height: 100%;
     z-index: -1;
-    pointer-events: none; /* Let mouse clicks pass through */
+    pointer-events: none;
 }
 
-/* === 1. BLACK HOLE & SUPERNOVA LOADER === */
+/* === 1. BLACK HOLE & SUPERNOVA LOADER (OPTIMIZED) === */
 #loader-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100vh;
@@ -42,30 +41,31 @@ body.no-scroll {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Fade out the whole overlay at the end */
     animation: fadeOutContainer 2s ease-in-out 3s forwards;
     pointer-events: none;
 }
 
 .accretion-disk {
-    width: 0px; height: 0px;
+    /* Fixed size to allow transform: scale optimization */
+    width: 300px; height: 300px; 
     border-radius: 50%;
-    /* The glowing ring */
     box-shadow: 0 0 60px 20px rgba(255, 255, 255, 1);
     background: #000;
-    /* Implode animation */
+    /* Changed to transform for better performance (no layout thrashing) */
+    transform: scale(0.5); 
+    opacity: 0;
     animation: implode 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes implode {
-0% { width: 300px; height: 300px; opacity: 0; transform: scale(0.5); }
-30% { width: 300px; height: 300px; opacity: 1; transform: scale(1); }
-70% { width: 150px; height: 150px; opacity: 1; transform: scale(0.8); }
-100% { width: 0px; height: 0px; opacity: 0; transform: scale(0); }
+    0% { transform: scale(0.5); opacity: 0; }
+    30% { transform: scale(1); opacity: 1; }
+    70% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
 }
 
 @keyframes fadeOutContainer {
-to { opacity: 0; visibility: hidden; }
+    to { opacity: 0; visibility: hidden; }
 }
 
 /* === NAVIGATION === */
@@ -84,7 +84,6 @@ nav {
     transition: opacity 0.5s ease, padding 0.5s ease;
 }
 
-/* Nav fade class added by JS */
 nav.nav-faded {
     opacity: 0.6;
     padding: 15px 40px;
@@ -130,7 +129,7 @@ nav.nav-faded:hover {
     z-index: 90;
     display: flex; justify-content: center; align-items: center;
     transition: 0.3s;
-    opacity: 0; pointer-events: none; /* Hidden by default */
+    opacity: 0; pointer-events: none;
 }
 #scroll-top-btn.visible {
     opacity: 1; pointer-events: all;
@@ -174,20 +173,19 @@ nav.nav-faded:hover {
 /* Scrollable Filters Logic */
 .filters-wrapper {
     width: 100%;
-    overflow-x: auto; /* Allows horizontal scroll */
-    padding-bottom: 10px; /* Space for scrollbar */
-    white-space: nowrap; /* Prevents wrapping */
-    -webkit-overflow-scrolling: touch; /* Smooth scroll on mobile */
-    /* Hide scrollbar for cleaner look in some browsers */
+    overflow-x: auto;
+    padding-bottom: 10px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none; 
 }
 .filters-wrapper::-webkit-scrollbar { display: none; }
 
 .filters {
-    display: inline-flex; /* Use inline-flex for horizontal list */
+    display: inline-flex;
     justify-content: center; 
     gap: 10px;
-    min-width: 100%; /* Ensures centering if few items, scrolling if many */
+    min-width: 100%;
 }
 
 .filters .filter-btn {
@@ -198,7 +196,7 @@ nav.nav-faded:hover {
     padding: 8px 16px;
     cursor: pointer; border-radius: 20px;
     transition: 0.3s;
-    flex-shrink: 0; /* Prevents buttons from squishing */
+    flex-shrink: 0;
 }
 .filter-btn.active, .filter-btn:hover {
     border-color: rgba(255,255,255,0.2);
@@ -208,7 +206,9 @@ nav.nav-faded:hover {
 .year-section { margin-bottom: 80px; }
 .year-title {
     font-family: var(--font-serif);
-    font-size: 2rem; color: #444; 
+    font-size: 2rem; 
+    /* CHANGED: Lighter color for better contrast (Accessibility Fix) */
+    color: #888; 
     border-bottom: 1px solid #222;
     margin-bottom: 30px;
     padding-bottom: 10px;
@@ -220,7 +220,6 @@ nav.nav-faded:hover {
     gap: 20px; 
 }
 
-/* COLOR TO B/W LOGIC */
 .g-item {
     aspect-ratio: 1/1;
     position: relative;
@@ -279,7 +278,6 @@ nav.nav-faded:hover {
 .story-row.reverse { flex-direction: row-reverse; }
 .parallax-divider {
     height: 350px;
-    /* Image set via inline style in HTML */
     background-attachment: fixed;
     background-size: cover;
     background-position: center;
@@ -326,9 +324,7 @@ nav.nav-faded:hover {
     font-family: var(--font-serif);
 }
 
-
 /* === CV SECTION === */
-
 .cv-wrapper { max-width: 1000px; margin: 0 auto 60px auto; }
 .cv-main-title {
     font-family: var(--font-serif);
@@ -380,7 +376,6 @@ nav.nav-faded:hover {
     max-height: 100vh; overflow-y: auto;
 }
 
-/* New Wrapper for Zoom logic */
 .lb-image-wrapper {
     width: 100%;
     max-height: 65vh;
@@ -388,7 +383,7 @@ nav.nav-faded:hover {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
-    overflow: hidden; /* Clips the zoomed image */
+    overflow: hidden; 
     position: relative;
     cursor: grab;
 }
@@ -398,7 +393,6 @@ nav.nav-faded:hover {
 }
 
 .lb-image-container {
-    /* The target for CSS transforms */
     transform-origin: center center;
     transition: transform 0.1s ease-out; 
 }
@@ -407,7 +401,6 @@ nav.nav-faded:hover {
     max-height: 65vh; max-width: 100%; 
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
     display: block;
-    /* Remove old margin, handled by wrapper now */
 }
 
 .lb-info { 
@@ -423,7 +416,6 @@ nav.nav-faded:hover {
     color: #fff; letter-spacing: 1px; font-weight: 400;
 }
 
-/* Story inside lightbox */
 .lb-story {
     max-width: 700px; margin: 0 auto 30px auto;
     color: #aaa; font-family: var(--font-serif); font-size: 1.1rem;
@@ -453,7 +445,6 @@ nav.nav-faded:hover {
 }
 .close-lb:hover { color: #fff; transform: rotate(90deg); }
 
-/* Navigation Arrows in Lightbox */
 .lb-nav-btn {
     position: absolute;
     top: 50%;
@@ -471,7 +462,6 @@ nav.nav-faded:hover {
 .prev-btn { left: 20px; }
 .next-btn { right: 20px; }
 
-
 /* === MOBILE RESPONSIVENESS === */
 @media(max-width: 768px) {
     nav { 
@@ -480,7 +470,7 @@ nav.nav-faded:hover {
         flex-direction: column; 
         gap: 15px;
     }
-    nav.nav-faded { padding: 10px 20px; } /* Adjust padding for mobile fade */
+    nav.nav-faded { padding: 10px 20px; }
     
     .nav-left { margin-bottom: 5px; }
     
@@ -501,7 +491,7 @@ nav.nav-faded:hover {
     .cv-grid { grid-template-columns: 1fr; gap: 40px; }
     .philosophical-quote { font-size: 1.8rem; }
     
-    .filters { justify-content: flex-start; } /* Left align on mobile for scrolling */
+    .filters { justify-content: flex-start; }
     
     .lb-content img, #lb-img { max-height: 50vh; }
     
