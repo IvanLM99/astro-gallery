@@ -41,19 +41,14 @@
     </script>
     <!-- ============================================ -->
 
-    <!-- PRECONNECT -->
+    <!-- PRECONNECT to speed up font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- CRITICAL CSS -->
     <link rel="stylesheet" href="style.css">
-    
-    <!-- FONTS -->
+    <!-- Added display=swap to avoid invisible text while loading -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- FONT AWESOME (Optimized loading to prevent render blocking) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -96,17 +91,9 @@
         <section id="gallery-tab" class="fade-in">
             
             <header class="gallery-header">
-                <!-- MODIFIED: Wrapper for absolute positioning stability -->
-                <div class="quote-wrapper-box">
-                    <div class="quote-content active" id="quote-1">
-                        <h1 class="philosophical-quote">"Estamos hechos de polvo de estrellas."</h1>
-                        <p class="quote-author">- Carl Sagan</p>
-                    </div>
-                    <!-- Secondary hidden container for transitions -->
-                    <div class="quote-content" id="quote-2">
-                        <h1 class="philosophical-quote"></h1>
-                        <p class="quote-author"></p>
-                    </div>
+                <div class="quote-container">
+                    <h1 id="quote-text" class="philosophical-quote">"Estamos hechos de polvo de estrellas."</h1>
+                    <p id="quote-author" class="quote-author">- Carl Sagan</p>
                 </div>
                 
                 <!-- Scrollable Filters Container -->
@@ -166,7 +153,7 @@
                 </div>
             </div>
 
-            <!-- Parallax Separator -->
+            <!-- 4th Image: Parallax Separator -->
             <div class="parallax-divider" style="background-image: url('assets/EclipseUs.jpg');"></div>
 
             <!-- EQUIPMENT SECTION -->
@@ -254,10 +241,11 @@
             </div>
         </section>
         
-        <!-- GLOBAL CONTACT FOOTER -->
+        <!-- GLOBAL CONTACT FOOTER (Visible on both tabs) -->
         <footer class="contact-footer">
             <p class="contact-quote" data-t="contact_quote">"Somewhere, something incredible is waiting to be known."</p>
             <div class="contact-icons">
+                <!-- Added aria-labels for accessibility score -->
                 <a href="mailto:ivan1999spain@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
                 <a href="https://linkedin.com/in/lmivan" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com/IvanLM99" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
@@ -269,12 +257,17 @@
 
     <!-- LIGHTBOX -->
     <div id="lightbox">
+        <!-- Added aria-labels for close button -->
         <span class="close-lb" onclick="closeLightbox()" aria-label="Close Lightbox">&times;</span>
         
+        <!-- Navigation Buttons -->
+        <button class="lb-nav-btn prev-btn" onclick="changeImage(-1)" aria-label="Previous Image"><i class="fas fa-chevron-left"></i></button>
+        <button class="lb-nav-btn next-btn" onclick="changeImage(1)" aria-label="Next Image"><i class="fas fa-chevron-right"></i></button>
+
         <div class="lb-content">
             <div class="lb-image-wrapper">
                 <div class="lb-image-container">
-                    <img id="lb-img" src="" alt="Expanded View" width="800" height="600">
+                    <img id="lb-img" src="" alt="Expanded View">
                 </div>
             </div>
             
@@ -306,13 +299,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- MOVED NAVIGATION BUTTONS OUTSIDE CONTENT FOR BETTER Z-INDEX HANDLING -->
-        <button class="lb-nav-btn prev-btn" onclick="changeImage(-1)" aria-label="Previous Image"><i class="fas fa-chevron-left"></i></button>
-        <button class="lb-nav-btn next-btn" onclick="changeImage(1)" aria-label="Next Image"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- Defer JS for performance -->
-    <script src="script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
