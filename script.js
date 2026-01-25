@@ -113,6 +113,7 @@ let currentLang = 'es';
 let galleryData = [];
 let visibleItems = []; 
 let currentImageIndex = 0; 
+let isMobile = window.innerWidth <= 768;
 
 /* === INIT & FETCH DATA === */
 document.addEventListener('DOMContentLoaded', () => {
@@ -124,12 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
             renderGallery(galleryData);
             visibleItems = [...galleryData];
             setLanguage(currentLang);
-            initZoomLogic(); // Initialize Zoom Event Listeners
+            initZoomLogic(); 
         })
         .catch(err => console.error('Error loading gallery data:', err));
     
     shuffleQuotes();
     initParticles(); 
+});
+
+window.addEventListener('resize', () => {
+    isMobile = window.innerWidth <= 768;
 });
 
 /* === DATE SORTING === */
@@ -170,14 +175,17 @@ function setLanguage(lang) {
     }
 }
 
-/* === PARTICLES BACKGROUND === */
+/* === PARTICLES BACKGROUND (OPTIMIZED) === */
 function initParticles() {
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     
     let width, height;
     let particles = [];
-    const particleCount = 150; 
+    
+    // REDUCED PARTICLES FOR MOBILE PERFORMANCE
+    const particleCount = isMobile ? 30 : 150; 
+    
     let shootingStar = null;
     let mouse = { x: null, y: null };
     let mouseActive = false;
@@ -206,13 +214,11 @@ function initParticles() {
             this.vx = (Math.random() - 0.5) * 0.2; 
             this.vy = (Math.random() - 0.5) * 0.2;
             this.size = Math.random() * 1.5;
-            this.baseX = this.x;
-            this.baseY = this.y;
             this.angle = Math.random() * Math.PI * 2;
         }
 
         update() {
-            if (mouseActive && mouse.x != null) {
+            if (mouseActive && mouse.x != null && !isMobile) {
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
@@ -411,7 +417,7 @@ function renderGallery(data) {
     }, {});
 
     const years = Object.keys(grouped).sort((a, b) => b - a);
-    let globalImageCount = 0; // Track how many images we've rendered so far
+    let globalImageCount = 0; 
 
     years.forEach(year => {
         const yearSection = document.createElement('div');
@@ -442,16 +448,16 @@ function renderGallery(data) {
             const ext = item.src.split('.').pop();
             const thumbSrc = item.src.replace(`.${ext}`, `_thumb.webp`);
 
-            // LCP OPTIMIZATION:
-            // First 4 images get loading="eager" (default), rest get "lazy".
-            // This prevents the "Avoid lazy loading for LCP element" warning.
+            // LCP OPTIMIZATION
             const loadingAttr = globalImageCount < 4 ? 'eager' : 'lazy';
+            const fetchPriority = globalImageCount < 2 ? 'high' : 'auto';
             globalImageCount++;
 
             itemDiv.innerHTML = `
                 <img src="${thumbSrc}" 
                      alt="${item.object_en}" 
                      loading="${loadingAttr}" 
+                     fetchpriority="${fetchPriority}"
                      onerror="this.onerror=null; this.src='${item.src}';">
                 <div class="overlay"><span data-t="details">DETAILS</span></div>
             `;
@@ -524,7 +530,22 @@ function closeLightbox() {
 }
 
 function updateLightboxContent(data) {
-    lbImg.src = data.src;
+    // PROGRESSIVE LOADING LOGIC:
+    // 1. Show the thumbnail immediately (it's likely already cached from the grid)
+    const ext = data.src.split('.').pop();
+    const thumbSrc = data.src.replace(`.${ext}`, `_thumb.webp`);
+    
+    lbImg.src = thumbSrc; 
+    
+    // 2. Load the high-res image in background and swap when ready
+    const highResImg = new Image();
+    highResImg.src = data.src;
+    highResImg.onload = () => {
+        // Only swap if we are still looking at the same image
+        if(visibleItems[currentImageIndex].src === data.src) {
+            lbImg.src = data.src;
+        }
+    };
     
     const title = currentLang === 'en' ? data.title_en : data.title_es;
     const story = currentLang === 'en' ? data.story_en : data.story_es;
@@ -654,11 +675,10 @@ document.addEventListener('keydown', function(e) {
     if (e.key === "ArrowRight") changeImage(1);
 });
 
-/* === CHANGE #3: MOBILE SWIPE GESTURES === */
+/* === MOBILE SWIPE GESTURES === */
 let touchStartX = 0;
 let touchEndX = 0;
 
-// Attach swipe listener to the main lightbox overlay
 lightbox.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
 }, {passive: true});
@@ -669,17 +689,13 @@ lightbox.addEventListener('touchend', (e) => {
 }, {passive: true});
 
 function handleSwipe() {
-    // 50px threshold to register as a swipe
     if (touchEndX < touchStartX - 50) {
-        // Swipe Left -> Next Image
         changeImage(1); 
     }
     if (touchEndX > touchStartX + 50) {
-        // Swipe Right -> Prev Image
         changeImage(-1); 
     }
 }
-/* ======================================== */
 
 /* === TAB SWITCHING === */
 function switchTab(tabName) {
@@ -703,23 +719,39 @@ function switchTab(tabName) {
     }
 }
 
-/* === NAVBAR SCROLL === */
+/* === SMART NAVBAR (HIDE ON DOWN SCROLL) === */
 const navbar = document.getElementById('navbar');
 const scrollTopBtn = document.getElementById('scroll-top-btn');
+let lastScrollY = window.scrollY;
 
-window.onscroll = function() {
-    if (window.scrollY > 50) {
+window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    
+    // 1. Show/Hide Navbar based on scroll direction
+    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling Down & past 100px -> Hide
+        navbar.classList.add('nav-hidden');
+    } else {
+        // Scrolling Up -> Show
+        navbar.classList.remove('nav-hidden');
+    }
+    
+    // 2. Add faded transparency if not at top
+    if (currentScrollY > 50) {
         navbar.classList.add('nav-faded');
     } else {
         navbar.classList.remove('nav-faded');
     }
 
-    if (window.scrollY > 500) {
+    // 3. Scroll to top button visibility
+    if (currentScrollY > 500) {
         scrollTopBtn.classList.add('visible');
     } else {
         scrollTopBtn.classList.remove('visible');
     }
-};
+
+    lastScrollY = currentScrollY;
+}, {passive: true}); // Passive listener improves scroll performance
 
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
