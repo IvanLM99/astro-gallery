@@ -129,8 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.error('Error loading gallery data:', err));
     
-    shuffleQuotes();
-    initParticles(); 
+    // Initial quote update without animation
+    const q1 = document.getElementById('quote-1');
+    if(q1) {
+        const t = currentLang === 'en' ? quotes[0].text_en : quotes[0].text_es;
+        q1.querySelector('.philosophical-quote').textContent = t;
+        q1.querySelector('.quote-author').textContent = quotes[0].author;
+    }
+    
+    // Defer non-critical logic
+    setTimeout(() => {
+        shuffleQuotes();
+        initParticles();
+        setInterval(cycleQuotes, 8000); 
+    }, 2000);
 });
 
 window.addEventListener('resize', () => {
@@ -168,7 +180,14 @@ function setLanguage(lang) {
     document.getElementById('lang-en').classList.toggle('active', lang === 'en');
     document.getElementById('lang-es').classList.toggle('active', lang === 'es');
 
-    updateQuoteDisplay();
+    // Update current visible quote immediately
+    const activeQuote = document.querySelector('.quote-content.active');
+    if(activeQuote) {
+        const q = quotes[quoteIndex];
+        const text = currentLang === 'en' ? q.text_en : q.text_es;
+        activeQuote.querySelector('.philosophical-quote').textContent = text;
+        activeQuote.querySelector('.quote-author').textContent = q.author;
+    }
     
     if (document.getElementById('lightbox').classList.contains('active')) {
         updateLightboxContent(visibleItems[currentImageIndex]);
@@ -178,19 +197,19 @@ function setLanguage(lang) {
 /* === PARTICLES BACKGROUND (OPTIMIZED) === */
 function initParticles() {
     const canvas = document.getElementById('bg-canvas');
+    if(!canvas) return;
     const ctx = canvas.getContext('2d');
     
     let width, height;
     let particles = [];
     
-    // REDUCED PARTICLES FOR MOBILE PERFORMANCE
-    const particleCount = isMobile ? 30 : 150; 
+    // HUGE PERFORMANCE BOOST FOR MOBILE: Less particles
+    const particleCount = isMobile ? 25 : 120; 
     
     let shootingStar = null;
     let mouse = { x: null, y: null };
     let mouseActive = false;
 
-    // Resize
     function resize() {
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight;
@@ -198,14 +217,16 @@ function initParticles() {
     window.addEventListener('resize', resize);
     resize();
 
-    // Mouse Tracking
-    window.addEventListener('mousemove', e => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-        mouseActive = true;
-        clearTimeout(window.mouseTimer);
-        window.mouseTimer = setTimeout(() => { mouseActive = false; }, 2000);
-    });
+    // Disable mouse tracking on mobile for performance
+    if(!isMobile) {
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouseActive = true;
+            clearTimeout(window.mouseTimer);
+            window.mouseTimer = setTimeout(() => { mouseActive = false; }, 2000);
+        });
+    }
 
     class Particle {
         constructor() {
@@ -218,13 +239,13 @@ function initParticles() {
         }
 
         update() {
-            if (mouseActive && mouse.x != null && !isMobile) {
+            // Mouse interaction only on Desktop
+            if (!isMobile && mouseActive && mouse.x != null) {
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                const force = (width * 0.1) / distance; 
-                
                 if (distance < 200) {
+                     const force = (width * 0.1) / distance; 
                     const angle = Math.atan2(dy, dx);
                     this.vx += Math.cos(angle) * force * 0.01;
                     this.vy += Math.sin(angle) * force * 0.01;
@@ -256,9 +277,7 @@ function initParticles() {
     }
 
     class ShootingStar {
-        constructor() {
-            this.reset();
-        }
+        constructor() { this.reset(); }
 
         reset() {
             this.x = Math.random() * width;
@@ -351,8 +370,6 @@ const quotes = [
 ];
 
 let quoteIndex = 0;
-const quoteTextEl = document.getElementById('quote-text');
-const quoteAuthEl = document.getElementById('quote-author');
 
 function shuffleQuotes() {
     for (let i = quotes.length - 1; i > 0; i--) {
@@ -361,32 +378,27 @@ function shuffleQuotes() {
     }
 }
 
-function updateQuoteDisplay() {
-    if(!quoteTextEl || !quoteAuthEl) return;
+function cycleQuotes() {
+    // 1. Identify active and inactive containers
+    const activeDiv = document.querySelector('.quote-content.active');
+    const inactiveDiv = document.querySelector('.quote-content:not(.active)');
+    
+    if(!activeDiv || !inactiveDiv) return;
+
+    // 2. Prepare next text in the inactive div
+    quoteIndex = (quoteIndex + 1) % quotes.length;
+    if(quoteIndex === 0) shuffleQuotes();
+    
     const q = quotes[quoteIndex];
     const text = currentLang === 'en' ? q.text_en : q.text_es;
-    quoteTextEl.textContent = text;
-    quoteAuthEl.textContent = q.author;
+    
+    inactiveDiv.querySelector('.philosophical-quote').textContent = text;
+    inactiveDiv.querySelector('.quote-author').textContent = q.author;
+
+    // 3. Swap classes to trigger CSS cross-fade
+    activeDiv.classList.remove('active');
+    inactiveDiv.classList.add('active');
 }
-
-function cycleQuotes() {
-    quoteTextEl.classList.remove('visible');
-    quoteAuthEl.classList.remove('visible');
-
-    setTimeout(function() {
-        quoteIndex = (quoteIndex + 1) % quotes.length;
-        if(quoteIndex === 0) shuffleQuotes();
-        updateQuoteDisplay();
-        quoteTextEl.classList.add('visible');
-        quoteAuthEl.classList.add('visible');
-    }, 1000); 
-}
-
-setTimeout(function() {
-    if(quoteTextEl) quoteTextEl.classList.add('visible');
-    if(quoteAuthEl) quoteAuthEl.classList.add('visible');
-    setInterval(cycleQuotes, 8000); 
-}, 3000);
 
 /* === DYNAMIC FILTERS === */
 function renderFilters(data) {
@@ -406,7 +418,7 @@ function renderFilters(data) {
     filtersContainer.innerHTML = html;
 }
 
-/* === DYNAMIC GALLERY RENDER (OPTIMIZED LCP) === */
+/* === DYNAMIC GALLERY RENDER (OPTIMIZED) === */
 function renderGallery(data) {
     const container = document.getElementById('dynamic-gallery-root');
     container.innerHTML = '';
@@ -451,6 +463,7 @@ function renderGallery(data) {
             // LCP OPTIMIZATION
             const loadingAttr = globalImageCount < 4 ? 'eager' : 'lazy';
             const fetchPriority = globalImageCount < 2 ? 'high' : 'auto';
+            const decoding = globalImageCount < 4 ? 'sync' : 'async'; // Add async decoding
             globalImageCount++;
 
             itemDiv.innerHTML = `
@@ -458,6 +471,8 @@ function renderGallery(data) {
                      alt="${item.object_en}" 
                      loading="${loadingAttr}" 
                      fetchpriority="${fetchPriority}"
+                     decoding="${decoding}"
+                     width="500" height="500"
                      onerror="this.onerror=null; this.src='${item.src}';">
                 <div class="overlay"><span data-t="details">DETAILS</span></div>
             `;
@@ -530,18 +545,16 @@ function closeLightbox() {
 }
 
 function updateLightboxContent(data) {
-    // PROGRESSIVE LOADING LOGIC:
-    // 1. Show the thumbnail immediately (it's likely already cached from the grid)
     const ext = data.src.split('.').pop();
     const thumbSrc = data.src.replace(`.${ext}`, `_thumb.webp`);
     
+    // Low res first
     lbImg.src = thumbSrc; 
     
-    // 2. Load the high-res image in background and swap when ready
+    // High res load
     const highResImg = new Image();
     highResImg.src = data.src;
     highResImg.onload = () => {
-        // Only swap if we are still looking at the same image
         if(visibleItems[currentImageIndex].src === data.src) {
             lbImg.src = data.src;
         }
@@ -662,7 +675,8 @@ function resetZoom() {
 
 if(lightbox) {
     lightbox.addEventListener('click', function(e) {
-        if(e.target === lightbox || e.target.classList.contains('lb-content')) {
+        // Prevent closing if clicking buttons or wrapper
+        if(e.target === lightbox) {
             closeLightbox();
         }
     });
@@ -689,6 +703,7 @@ lightbox.addEventListener('touchend', (e) => {
 }, {passive: true});
 
 function handleSwipe() {
+    // Threshold of 50px
     if (touchEndX < touchStartX - 50) {
         changeImage(1); 
     }
@@ -719,7 +734,7 @@ function switchTab(tabName) {
     }
 }
 
-/* === SMART NAVBAR (HIDE ON DOWN SCROLL) === */
+/* === SMART NAVBAR === */
 const navbar = document.getElementById('navbar');
 const scrollTopBtn = document.getElementById('scroll-top-btn');
 let lastScrollY = window.scrollY;
@@ -727,23 +742,18 @@ let lastScrollY = window.scrollY;
 window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
     
-    // 1. Show/Hide Navbar based on scroll direction
     if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling Down & past 100px -> Hide
         navbar.classList.add('nav-hidden');
     } else {
-        // Scrolling Up -> Show
         navbar.classList.remove('nav-hidden');
     }
     
-    // 2. Add faded transparency if not at top
     if (currentScrollY > 50) {
         navbar.classList.add('nav-faded');
     } else {
         navbar.classList.remove('nav-faded');
     }
 
-    // 3. Scroll to top button visibility
     if (currentScrollY > 500) {
         scrollTopBtn.classList.add('visible');
     } else {
@@ -751,7 +761,7 @@ window.addEventListener('scroll', () => {
     }
 
     lastScrollY = currentScrollY;
-}, {passive: true}); // Passive listener improves scroll performance
+}, {passive: true});
 
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
