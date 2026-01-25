@@ -9,10 +9,6 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html {
-    scroll-behavior: smooth; /* Professional touch */
-}
-
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
@@ -85,16 +81,21 @@ nav {
     transition: transform 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
 }
 
-nav.nav-hidden { transform: translateY(-100%); }
+/* Hide Navbar when scrolling down */
+nav.nav-hidden {
+    transform: translateY(-100%);
+}
 
 nav.nav-faded {
     opacity: 0.95;
-    background: rgba(3, 3, 3, 0.95);
+    background: rgba(3, 3, 3, 0.95); /* Remove blur for mobile perf if needed */
     padding: 15px 40px;
 }
 
 @media (min-width: 769px) {
-    nav.nav-faded { backdrop-filter: blur(10px); }
+    nav.nav-faded {
+       backdrop-filter: blur(10px); 
+    }
 }
 
 .site-title {
@@ -136,8 +137,12 @@ nav.nav-faded {
     transition: 0.3s;
     opacity: 0; pointer-events: none;
 }
-#scroll-top-btn.visible { opacity: 1; pointer-events: all; }
-#scroll-top-btn:hover { background: #fff; color: #000; }
+#scroll-top-btn.visible {
+    opacity: 1; pointer-events: all;
+}
+#scroll-top-btn:hover {
+    background: #fff; color: #000;
+}
 
 /* === MAIN LAYOUT === */
 .content-container { min-height: 100vh; padding: 40px 50px; }
@@ -149,35 +154,17 @@ nav.nav-faded {
     to { opacity: 1; transform: translateY(0); } 
 }
 
-/* === GALLERY & QUOTES === */
+/* === GALLERY === */
 .gallery-header { text-align: center; margin-bottom: 60px; margin-top: 20px; }
 
-/* REFACTORED QUOTE BOX FOR NO OVERLAP */
-.quote-wrapper-box {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto 30px auto;
-    /* Fixed height reserves space so layout doesn't jump */
-    min-height: 160px; 
-    display: flex;
+/* Fixed height container for quotes to prevent layout shifts */
+.quote-container { 
+    min-height: 140px; 
+    margin-bottom: 30px; 
+    display: flex; 
+    flex-direction: column; 
     justify-content: center;
-    align-items: center;
-}
-
-.quote-content {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-    pointer-events: none; /* prevent clicking hidden quotes */
-}
-
-.quote-content.active {
-    opacity: 1;
-    pointer-events: auto;
+    position: relative;
 }
 
 .philosophical-quote {
@@ -186,15 +173,19 @@ nav.nav-faded {
     font-style: italic;
     color: var(--accent);
     margin-bottom: 15px;
-    line-height: 1.2;
+    opacity: 0;
+    transition: opacity 1s ease;
 }
 .quote-author {
     font-family: var(--font-sans);
     font-size: 0.85rem;
     color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 1s ease;
 }
+.visible { opacity: 1 !important; }
 
-/* Filters */
+/* Scrollable Filters Logic */
 .filters-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -227,12 +218,7 @@ nav.nav-faded {
     color: var(--accent);
 }
 
-.year-section { 
-    margin-bottom: 80px; 
-    content-visibility: auto; /* Optimization for off-screen rendering */
-    contain-intrinsic-size: 1000px; /* Estimated height */
-}
-
+.year-section { margin-bottom: 80px; }
 .year-title {
     font-family: var(--font-serif);
     font-size: 2rem; 
@@ -256,7 +242,6 @@ nav.nav-faded {
     filter: grayscale(0%) contrast(1);
     transition: filter 0.5s ease;
     border-radius: 2px;
-    background-color: #111; /* Skeleton placeholder color */
 }
 
 .g-item:hover { 
@@ -267,7 +252,6 @@ nav.nav-faded {
     width: 100%; height: 100%;
     object-fit: cover;
     transition: transform 0.8s ease;
-    display: block;
 }
 
 .g-item:hover img { transform: scale(1.05); }
@@ -291,7 +275,7 @@ nav.nav-faded {
     display: flex; align-items: center; gap: 80px; margin-bottom: 120px;
 }
 
-.story-img { flex: 1; overflow: hidden; background-color: #111; }
+.story-img { flex: 1; overflow: hidden; }
 .story-img img { width: 100%; display: block; filter: brightness(0.9); }
 
 .story-text { flex: 1; }
@@ -395,11 +379,14 @@ nav.nav-faded {
     background: rgba(5, 5, 5, 0.98); 
     z-index: 2000;
     display: none; justify-content: center; align-items: center;
-    opacity: 0; transition: opacity 0.3s ease;
+    opacity: 0; transition: opacity 0.5s ease;
+    backdrop-filter: blur(10px); /* Keep logic in desktop */
 }
 
-@media (min-width: 769px) {
-    #lightbox { backdrop-filter: blur(10px); }
+@media (max-width: 768px) {
+    #lightbox {
+        backdrop-filter: none; /* Disable expensive blur on mobile */
+    }
 }
 
 #lightbox.active { display: flex; opacity: 1; }
@@ -408,8 +395,6 @@ nav.nav-faded {
     display: flex; flex-direction: column; align-items: center; 
     width: 100%; max-width: 1200px; padding: 20px;
     max-height: 100vh; overflow-y: auto;
-    position: relative;
-    z-index: 2001; /* Content below buttons */
 }
 
 .lb-image-wrapper {
@@ -424,20 +409,19 @@ nav.nav-faded {
     cursor: grab;
 }
 
-.lb-image-wrapper:active { cursor: grabbing; }
+.lb-image-wrapper:active {
+    cursor: grabbing;
+}
 
 .lb-image-container {
     transform-origin: center center;
     transition: transform 0.1s ease-out; 
-    /* Important for performance */
-    will-change: transform;
 }
 
 #lb-img { 
     max-height: 65vh; max-width: 100%; 
     box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
     display: block;
-    background-color: #111;
 }
 
 .lb-info { 
@@ -475,17 +459,12 @@ nav.nav-faded {
     display: block; font-size: 1.1rem; color: #e0e0e0; font-family: var(--font-serif); font-style: italic;
 }
 
-/* === LIGHTBOX CONTROLS (OPTIMIZED FOR NO OVERLAP) === */
 .close-lb { 
-    position: absolute; top: 20px; right: 30px; 
-    color: #bbb; font-size: 2.5rem; cursor: pointer; transition: 0.3s;
-    z-index: 2005; /* Highest z-index */
-    background: rgba(0,0,0,0.3); /* Slight bg for visibility on image */
-    width: 50px; height: 50px;
-    display: flex; justify-content: center; align-items: center;
-    border-radius: 50%;
+    position: absolute; top: 30px; right: 40px; 
+    color: #888; font-size: 2rem; cursor: pointer; transition: 0.3s;
+    z-index: 2001;
 }
-.close-lb:hover { color: #fff; background: rgba(255,255,255,0.1); }
+.close-lb:hover { color: #fff; transform: rotate(90deg); }
 
 .lb-nav-btn {
     position: absolute;
@@ -493,16 +472,16 @@ nav.nav-faded {
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: #777;
+    color: #555;
     font-size: 3rem;
     cursor: pointer;
     padding: 20px;
-    z-index: 2005; /* Above Image */
+    z-index: 2002;
     transition: 0.3s;
 }
 .lb-nav-btn:hover { color: #fff; transform: translateY(-50%) scale(1.1); }
-.prev-btn { left: 10px; }
-.next-btn { right: 10px; }
+.prev-btn { left: 20px; }
+.next-btn { right: 20px; }
 
 /* === MOBILE RESPONSIVENESS === */
 @media(max-width: 768px) {
@@ -515,8 +494,10 @@ nav.nav-faded {
     nav.nav-faded { padding: 10px 20px; }
     
     .nav-left { margin-bottom: 5px; }
+    
     .nav-center { width: 100%; justify-content: center; }
-    .menu-btn { font-size: 0.8rem; margin: 0; padding: 10px 15px; }
+    .menu-btn { font-size: 0.8rem; margin: 0; }
+    
     .nav-right { margin-top: 5px; }
 
     .content-container { padding: 20px 15px; }
@@ -533,40 +514,19 @@ nav.nav-faded {
     .cv-grid { grid-template-columns: 1fr; gap: 40px; }
     
     /* Quote Mobile Adjustments */
-    .quote-wrapper-box { min-height: 200px; } 
-    .philosophical-quote { font-size: 1.5rem; }
+    .quote-container { min-height: 200px; } /* Increased height to prevent overlap */
+    .philosophical-quote { font-size: 1.6rem; }
     
     .filters { justify-content: flex-start; }
     
-    /* Lightbox Mobile Overlap Fixes */
-    .lb-content { padding: 10px; padding-top: 60px; /* Space for close button */ }
     .lb-content img, #lb-img { max-height: 50vh; }
     
     .tech-specs { gap: 20px; flex-direction: column; }
     .lb-story { font-size: 1rem; }
     
-    /* Move close button clearly out of way */
-    .close-lb { top: 15px; right: 15px; width: 40px; height: 40px; font-size: 2rem; }
-    
-    /* Move arrows to bottom to prevent image overlap */
-    .lb-nav-btn {
-        top: auto; 
-        bottom: 10px; 
-        transform: none; 
-        background: rgba(20,20,20,0.8);
-        border-radius: 50%;
-        width: 50px; height: 50px;
-        padding: 0;
-        display: flex; justify-content: center; align-items: center;
-        font-size: 1.5rem;
-        color: #fff;
-    }
-    .lb-nav-btn:hover { transform: scale(1.1); }
-    .prev-btn { left: 20px; }
-    .next-btn { right: 20px; }
-    
-    /* Scroll top - prevent footer overlap */
-    #scroll-top-btn { bottom: 20px; right: 20px; }
+    .lb-nav-btn { font-size: 2rem; padding: 10px; }
+    .prev-btn { left: 5px; }
+    .next-btn { right: 5px; }
 
     .equipment-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
 }
